@@ -89,7 +89,7 @@ users.post('/register',(req, res)=>{
                  res.send('error' + err)
                }) 
            }else{
-               res.json({error : 'User already exist'})
+               res.json({error : 'USER_ALREADY_EXISTS'})
            } 
        })
        .catch(err =>{
@@ -122,10 +122,10 @@ users.post('/register',(req, res)=>{
              })
              res.json({token : token})
          }else{
-             res.send('Invalid password')
+             res.json({error: 'INVALID_PASSWORD'})
          }
         }else{
-          res.send('User does not exist')
+          res.json({error: 'USER_DOES_NOT_EXIST'})
         }
     })
      .catch(err =>{
@@ -145,7 +145,7 @@ users.post('/register',(req, res)=>{
             if(user) {
               res.json(user)
             } else{
-              res.send("User Not Exist")
+              res.json({error: "USER_DOES_NOT_EXIST"})
             }
         })
         .catch(err =>{
