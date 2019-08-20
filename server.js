@@ -16,11 +16,14 @@
 
  var Users= require ("./routes/Users")
  var Complains= require ("./routes/Complains")
- var  Images= require ("./routes/Images")
+ var Images= require ("./routes/Images")
+ var ProfileImages= require("./routes/ProfileImages")
 
-app.use("/users", Users)
-app.use("/users", Complains)
-app.use("/users", Images)
+app.use("/users", Users);
+app.use("/users", Complains);
+app.use("/users", Images);
+app.use("/users", ProfileImages);
+app.use(express.static(path.join(__dirname,'propics')))
 app.use(express.static(path.join(__dirname,'uploads')))
 
 app.listen(port, function(){

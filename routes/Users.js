@@ -7,6 +7,7 @@ var async = require("async");
 const nodemailer = require("nodemailer");
 const User = require("../models/User")
 var multer = require("multer");
+const uuidv1 = require('uuid/v1');
 users.use(cors())
 
 process.env.SECRET_KEY = 'secret'
@@ -188,11 +189,106 @@ users.post('/editprofile',(req, res)=> {
 
     }) 
 
-/*resetPassword*/
+/*forgotPassword*/
+users.post('/forgot', (req, res, err) => {
+  User.findOne({
+      where: {
+          email: req.body.email
+      }
+  })
+      .then(user => {
+          if (!user) {
+              res.json({ message: 'NO_ACCOUNT_ASSOCIATED' });
+          }
+
+          else {
+              var token = uuidv1();
+              console.log(token);
+              user.id = req.body.id;
+              user.resetPasswordToken = token;
+              user.resetPasswordExpires = Date.now();
+              user.save((user) => {
+                  res.json(user)
+              });
+              async function main() {
+                  let transporter = nodemailer.createTransport({
+                      host: "smtp.gmail.com",
+                      auth: {
+                          user: "dilina5860717@gmail.com", // generated ethereal user
+                          pass: "##7@dilina" // generated ethereal password
+                      }
+                  });
+
+                  // send mail with defined transport object
+                  let info = await transporter.sendMail({
+                      from: "dilina5860717@gmail.com", // sender address
+                      to: req.body.email, // list of receivers
+                      subject: "Hello ✔", // Subject line
+                      html: "<b>Hello world?</b>" + "http://localhost:4200/reset-pass-token?token=" + token// html body
+                  });
+
+                  console.log("Message sent: %s", info.messageId);
+                  res.send({ token: token });
+              }
+
+              main().catch(console.error);
+          }
+      })
+})
 
    
+/*resetPassword*/
 
-/*propic*/
+users.post('/reset', (req, res, err) => {
+    console.log(req.query.token);
+  User.findOne({
+      where: {
+          resetPasswordToken: req.query.token
+      }
+  })
+
+      .then(user => {
+          if (user) {
+              //res.json({user});
+
+              user.password = req.query.password;
+              bcrypt.hash(user.password, 10, (err, hash) => {
+                  if (err) {
+                      res.json({
+                          Message: err
+                      })
+                  }
+                  else {
+                      user.password = hash;
+                      user.save()
+                          .then(user => {
+                              res.json(user);
+                              console.log('password updated');
+                          })
+                          .catch(err => {
+                              res.json(err);
+                              console.log(err);
+                          })
+                  }
+
+
+
+
+              })
+
+          }
+          else {
+              res.json({
+                  Message: 'Reset password token has expired'
+              })
+          }
+      })
+      .catch(err => {
+          console.log(err);
+      })
+
+})
+
 
 
 module.exports = users

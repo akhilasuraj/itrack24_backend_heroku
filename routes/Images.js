@@ -4,7 +4,7 @@ const multer = require('multer');
 const image=express.Router()
 const cors= require("cors")
 const Image = require("../models/Image")
-// const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 image.use(cors());
 
 const imageData={
@@ -38,7 +38,7 @@ var upload = multer({ storage: storage,
 image.post('/getID',(req, res)=>{
 
     imageData.user_ID = req.body.user_ID
-    console.log(req.body.user_ID)
+    console.log(28)
 })
  
 //

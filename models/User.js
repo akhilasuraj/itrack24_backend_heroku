@@ -36,9 +36,6 @@ module.exports = db.sequelize.define(
         type:Sequelize.STRING
      },
 
-   //   profileimg:{
-   //      type:Sequelize.STRING
-   //   },
      resetPasswordToken:{
          type:Sequelize.STRING
      },
