@@ -33,7 +33,6 @@ module.exports = db.sequelize.define(
      date:{
       type:Sequelize.STRING
      },
-     
      time:{
       type:Sequelize.STRING
    },
@@ -45,6 +44,14 @@ module.exports = db.sequelize.define(
      latitude:{
       type:Sequelize.FLOAT
    },
+
+   status:{
+      type:Sequelize.STRING
+   },
+
+   isAccepted:{
+      type:Sequelize.BOOLEAN
+   }
 
     },    
 

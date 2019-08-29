@@ -34,12 +34,12 @@ var storage = multer.diskStorage({
 });
 
 var upload = multer({ storage: storage,
-    limits:{ fileSize:'100M'}
+    limits:{ fileSize:'4M'}
 });
 
 proimage.post('/getUserID',(req,res)=>{
     proimg_data.u_id = req.body.user_ID;
-    console.log(req.body.user_ID);
+    
 })
 
 proimage.post('/profilepic',upload.single('prophoto'), async function(req,res){

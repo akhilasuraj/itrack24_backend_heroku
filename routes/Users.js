@@ -45,9 +45,6 @@ var upload=multer({
 })
 
 users.post('/register',(req, res)=>{
-  // if(req.body.file){
-  //   console.log('file received');
-  // }
    const today= new Date()
    console.log(req.body)
    const userData = { 
@@ -251,11 +248,12 @@ users.post('/reset', (req, res, err) => {
           if (user) {
               //res.json({user});
 
-              user.password = req.query.password;
-              bcrypt.hash(user.password, 10, (err, hash) => {
-                  if (err) {
+              //user.password = req.query.password;
+              bcrypt.hash(req.body.password, 10, (brr, hash) => {
+                  if (brr) {
+                      console.log(brr);
                       res.json({
-                          Message: err
+                          Message: brr
                       })
                   }
                   else {

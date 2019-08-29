@@ -38,7 +38,7 @@ var upload = multer({ storage: storage,
 image.post('/getID',(req, res)=>{
 
     imageData.user_ID = req.body.user_ID
-    console.log(28)
+  
 })
  
 //
