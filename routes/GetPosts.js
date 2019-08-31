@@ -26,9 +26,10 @@ getposts.get('/viewposts',(req,res,err)=>{
 
 //GET_MY_POSTS
 getposts.post('/viewmyposts', (req,res)=>{
+    console.log(req.body.uid);
     Post.findAll({
         where:{
-          UserID:req.body.id
+          UserID:req.body.uid
         }
     })
     .then((result)=>{
@@ -38,13 +39,15 @@ getposts.post('/viewmyposts', (req,res)=>{
 })
 
 //DELETE_POST
-getposts.delete("/deletepost",(req,res)=>{
+getposts.post('/deletepost',(req,res)=>{
+    console.log(req.body.postid);
     Post.destroy({
         where:{
-          id:req.body.id
+          id:req.body.postid
         }
     })
     .then((result)=>{
+        res.json(result);
         console.log("POST_DELETED");
     })
 })

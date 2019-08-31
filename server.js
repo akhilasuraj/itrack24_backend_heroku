@@ -20,6 +20,7 @@
  var ProfileImages= require("./routes/ProfileImages");
  var MakePosts=require("./routes/MakePosts");
  var GetPosts=require("./routes/GetPosts");
+ var Charts=require("./routes/Charts");
 
 app.use("/users", Users);
 app.use("/users", Complains);
@@ -27,6 +28,7 @@ app.use("/users", Images);
 app.use("/users", ProfileImages);
 app.use("/users", MakePosts);
 app.use("/users", GetPosts);
+app.use("/users", Charts);
 
 app.use(express.static(path.join(__dirname,'propics')));
 app.use(express.static(path.join(__dirname,'uploads')));

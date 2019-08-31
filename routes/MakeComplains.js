@@ -1,10 +1,8 @@
-const express = require("express")
-const complains = express.Router()
-const cors = require("cors")
-
-
-const Complain = require("../models/Complain")
-complains.use(cors())
+const express = require("express");
+const complains = express.Router();
+const cors = require("cors");
+const Complain = require("../models/Complain");
+complains.use(cors());
 
 const complainData = {
    user_id:0,
@@ -45,21 +43,20 @@ complains.post('/complain', (req, res) => {
       })
 
 //GET_MY_COMPLAINS
-   complains.get('/mycomplains', (req, res) => {
-      Complain.findOne({
-         where: {
-            user_id: req.body.user_id
-         }
-      })
-         .then((cmp) => {
-            console.log(cmp);
-            res.json(cmp);
-         })
+complains.post("/mycomplains",(req,res)=>{
+   console.log('hei');
+   console.log(req.body.User_id);
+   Complain.findAll({
+      where:{
+         user_id:req.body.User_id
+      }
    })
-
+   .then((result)=>{
+      res.json(result);
+      console.log("HERE_ALL_MY_POSTS");
+   })
 })
 
 
-
-
+})
 module.exports = complains
