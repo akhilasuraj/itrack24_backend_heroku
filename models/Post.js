@@ -17,6 +17,9 @@ module.exports = db.sequelize.define(
         PostText:{
             type: Sequelize.STRING
         },
+        PostTitle:{
+            type: Sequelize.STRING
+        },
         PostImg:{
             type: Sequelize.STRING
         },

@@ -59,6 +59,7 @@ PostDetails = {
     UserID: 0,
     FirstName: '',
     PostText: '',
+    PostTitle:'',
     PostImg:'',
     PostDate: '',
     PostTime: ''
@@ -94,6 +95,7 @@ posts.post('/addpost', (req, res, err) => {
         FirstName: req.body.FirstName,
         LastName: req.body.LastName,
         PostText: req.body.PostText,
+        PostTitle: req.body.PostTitle,
         PostImg: Img_Data.post_img,
         PostDate: getDate(),            
         PostTime: getTime()
