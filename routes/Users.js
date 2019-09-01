@@ -80,7 +80,7 @@ users.post('/register',(req, res)=>{
                       {
                           expiresIn :1440
                     })
-                    res.json({token : token, firstname: user.first_name, lastName: user.last_name, userId: user.id})
+                    res.json({token : token, firstName: user.first_name, lastName: user.last_name, userId: user.id})
                })
                .catch(err =>{
                  res.send('error' + err)
@@ -117,7 +117,7 @@ users.post('/register',(req, res)=>{
              let token = jwt.sign(user.dataValues, process.env.SECRET_KEY,{
                expiresIn:1440
              })
-             res.json({token : token, firstname: user.first_name, lastName: user.last_name, userId: user.id})
+             res.json({token : token, firstName: user.first_name, lastName: user.last_name, userId: user.id})
          }else{
              res.json({error: 'INVALID_PASSWORD'})
          }
