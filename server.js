@@ -16,19 +16,21 @@
 
  var Users= require ("./routes/Users");
  var Complains= require ("./routes/MakeComplains");
- var Images= require ("./routes/Images");
  var ProfileImages= require("./routes/ProfileImages");
  var MakePosts=require("./routes/MakePosts");
  var GetPosts=require("./routes/GetPosts");
  var Charts=require("./routes/Charts");
+ var Notifications=require("./routes/Notifications");
+
 
 app.use("/users", Users);
 app.use("/users", Complains);
-app.use("/users", Images);
 app.use("/users", ProfileImages);
 app.use("/users", MakePosts);
 app.use("/users", GetPosts);
 app.use("/users", Charts);
+app.use("/users", Notifications);
+
 
 app.use(express.static(path.join(__dirname,'propics')));
 app.use(express.static(path.join(__dirname,'uploads')));

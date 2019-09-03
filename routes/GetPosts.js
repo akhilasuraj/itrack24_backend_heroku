@@ -17,7 +17,11 @@ PostDetails = {
 
 //GET_POSTS
 getposts.get('/viewposts',(req,res,err)=>{
-    Post.findAll()                       //.findAll returns all the rows in table//
+    Post.findAll({
+        order: [
+            ['id','DESC'],
+        ],
+    })                       //.findAll returns all the rows in table//
     .then(result=>{
         console.log('HERE ALL THE POSTS...');
         res.json(result);
@@ -25,12 +29,15 @@ getposts.get('/viewposts',(req,res,err)=>{
 });
 
 //GET_MY_POSTS
-getposts.post('/viewmyposts', (req,res)=>{
+getposts.get('/viewmyposts', (req,res)=>{
     console.log(req.body.uid);
     Post.findAll({
         where:{
           UserID:req.body.uid
-        }
+        },
+        order: [
+            ['id','DESC'],
+        ]
     })
     .then((result)=>{
         res.json(result);

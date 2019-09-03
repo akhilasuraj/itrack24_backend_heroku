@@ -96,7 +96,7 @@ posts.post('/addpost', (req, res, err) => {
         LastName: req.body.LastName,
         PostText: req.body.PostText,
         PostTitle: req.body.PostTitle,
-        PostImg: Img_Data.post_img,
+        PostImg:Img_Data.post_img,
         PostDate: getDate(),            
         PostTime: getTime()
     }
@@ -111,7 +111,6 @@ posts.post('/addpost', (req, res, err) => {
                 res.json(err);
 
             });
-
     }
     else {
         console.log('POST_NOT_RECEIVED');
