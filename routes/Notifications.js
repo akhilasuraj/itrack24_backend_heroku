@@ -8,12 +8,12 @@ const Sequelize = require('sequelize');
 
 
 //NOTIFICATION_FOR_POSTS
-notifications.get('/getPostCount',(req,res)=>{
-  console.log(req.body.id)
-    Post.findAll({
+notifications.post('/getPostCount',(req,res)=>{
+  console.log(req.body.uid)
+    Post.count({
         where:{
         UserID:{
-            [Sequelize.Op.ne]:[req.body.id]
+            [Sequelize.Op.ne]:[req.body.uid]
         },
     }
     }).then((result)=>{
@@ -21,15 +21,29 @@ notifications.get('/getPostCount',(req,res)=>{
     })
 })
 
-notifications.get('/getmyCompCount',(req,res)=>{
+notifications.post('/getCompCount',(req,res)=>{
     console.log(req.body.uid);
-    Complain.findAll({
+    Complain.count({
         where:{
             user_ID:{
-                [Sequelize.Op.ne]:[req.body.uid]
+                [Sequelize.Op.ne]:[req.body.uid] //NOT_QUERY Op=OPTION ne=NOT
             },
         }
     }).then((respond)=>{
+        res.json(respond);
+    })
+})
+
+notifications.get('/viewPostNotifications',(req,res)=>{
+    Post.findAll({
+        where:{
+            UserID:{
+                [Sequelize.Op.ne]:[req.body.uid] //NOT_QUERY Op=OPTION ne=NOT
+            },
+            isViwed:false
+        }
+    })
+    .then((respond)=>{  
         res.json(respond);
     })
 })

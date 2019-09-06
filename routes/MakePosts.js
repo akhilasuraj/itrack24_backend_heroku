@@ -62,7 +62,8 @@ PostDetails = {
     PostTitle:'',
     PostImg:'',
     PostDate: '',
-    PostTime: ''
+    PostTime: '',
+    isViwed:false
 
 }
 //ADD_CURRENT_DATE
@@ -98,7 +99,8 @@ posts.post('/addpost', (req, res, err) => {
         PostTitle: req.body.PostTitle,
         PostImg:Img_Data.post_img,
         PostDate: getDate(),            
-        PostTime: getTime()
+        PostTime: getTime(),
+        isViwed:false
     }
     if (PostDetails) {
         console.log(PostDetails);

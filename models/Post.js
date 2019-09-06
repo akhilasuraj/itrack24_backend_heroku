@@ -28,6 +28,9 @@ module.exports = db.sequelize.define(
         },
         PostTime:{
             type: Sequelize.TIME
+        },
+        isViwed:{
+            type: Sequelize.BOOLEAN
         }
 
     },

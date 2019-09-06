@@ -95,13 +95,14 @@ complains.post('/complain', (req, res) => {
 
 
 //GET_MY_COMPLAINS
-complains.get('/mycomplains', (req, res) => {
+complains.post('/mycomplains', (req, res) => {
+   console.log(req.body.user_id);
    Complain.findAll({
       where: {
          user_id: req.body.user_id,
       },
       order: [
-         ['id','DESC'],
+         ['id','DESC'], //GET_AS_DESCENDING_ORDER
      ]
    })
       .then((respond) => {
