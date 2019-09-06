@@ -11,7 +11,8 @@ PostDetails = {
     PostText: '',
     PostImg:'',
     PostDate: '',
-    PostTime: ''
+    PostTime: '',
+    isViwed:''
     
 }
 
@@ -29,7 +30,7 @@ getposts.get('/viewposts',(req,res,err)=>{
 });
 
 //GET_MY_POSTS
-getposts.get('/viewmyposts', (req,res)=>{
+getposts.post('/viewmyposts', (req,res)=>{
     console.log(req.body.uid);
     Post.findAll({
         where:{
@@ -56,6 +57,31 @@ getposts.post('/deletepost',(req,res)=>{
     .then((result)=>{
         res.json(result);
         console.log("POST_DELETED");
+    })
+})
+
+//GET_SELECTED_POST
+getposts.post('/getselectedpost',(req,res)=>{
+    console.log(req.body.userid);
+    console.log(req.body.postid);
+
+    Post.findOne({
+        where:{
+            id:req.body.postid,
+            UserID:req.body.userid
+        }
+    }).then((result)=>{
+        res.json(result);
+        console.log("THIS_IS_SELECTED_NOTIFICATION_POST")
+        if(result){
+        Post.update({
+            isViwed:true
+        },{
+            where:{
+                id:req.body.postid
+            }
+        })
+    }
     })
 })
 
