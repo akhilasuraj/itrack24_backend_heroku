@@ -43,6 +43,12 @@ module.exports = db.sequelize.define(
      resetPasswordExpires:{
       type:Sequelize.DATE
     },
+    tokenid:{
+       type:Sequelize.STRING
+    },
+    isActivated:{
+       type:Sequelize.BOOLEAN
+    }
 
     },
    {

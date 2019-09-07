@@ -9,9 +9,6 @@ module.exports = db.sequelize.define(
       user_id: {
          type: Sequelize.INTEGER
       },
-      uuid: {
-         type: Sequelize.STRING
-      },
       category: {
          type: Sequelize.STRING
       },

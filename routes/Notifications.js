@@ -45,7 +45,7 @@ notifications.post('/viewPostNotifications',(req,res)=>{
     Post.findAll({
         where:{
             UserID:{
-                [Sequelize.Op.ne]:[req.body.uid] //NOT_QUERY Op=OPTION ne=NOT
+                [Sequelize.Op.ne]:[req.body.UserID] //NOT_QUERY Op=OPTION ne=NOT
             },
             isViwed:false,
         },
@@ -65,7 +65,7 @@ notifications.post('/viewCompNotifications',(req,res)=>{
     Complain.findAll({
         where:{
             user_id:{
-                [Sequelize.Op.ne]:[req.body.uid] //NOT_QUERY Op=OPTION ne=NOT
+                [Sequelize.Op.ne]:[req.body.user_id] //NOT_QUERY Op=OPTION ne=NOT
             },
             isViwed:false,
         },
