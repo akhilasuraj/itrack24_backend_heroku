@@ -23,6 +23,14 @@ module.exports = db.sequelize.define(
         PostImg:{
             type: Sequelize.STRING
         },
+
+        PostDisLike:{
+            type: Sequelize.INTEGER
+        },
+        
+        PostLike:{
+            type: Sequelize.INTEGER
+        },
         PostDate:{
             type: Sequelize.DATE
         },

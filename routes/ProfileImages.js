@@ -83,5 +83,17 @@ proimage.post('/profilepic',upload.single('prophoto'), async function(req,res){
     }
 });
 
+//VIEW_PRO_IMAGE
+proimage.post('/viewproimage',(req,res)=>{
+    ProImg.findOne({
+        where :{
+            u_id: req.body.user_ID
+        }
+  }).then((result)=>{
+      res.json(result);
+      console.log("HERE_YOUR_PROFILE_IMAGE");
+  })
+})
+
 
 module.exports=proimage

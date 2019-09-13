@@ -61,6 +61,8 @@ PostDetails = {
     PostText: '',
     PostTitle:'',
     PostImg:'',
+    PostLike:0,
+    PostDisLike:0,
     PostDate: '',
     PostTime: '',
     isViwed:false
@@ -118,6 +120,34 @@ posts.post('/addpost', (req, res, err) => {
         console.log('POST_NOT_RECEIVED');
     }
 })
+
+//GET_POST_LIKE_COUNT
+posts.post('/likecount',(req,res)=>{
+   Post.update({
+       PostLike:req.body.PostLike
+   },{
+       where:{
+           id:req.body.id
+       }
+   }).then((likes)=>{
+       res.json(likes);
+   })
+
+});
+
+//GET_DISLIKE_COUNT
+posts.post('/dislikecount',(req,res)=>{
+    Post.update({
+        PostLike:req.body.PostLike
+    },{
+        where:{
+            id:req.body.id
+        }
+    }).then((dislikes)=>{
+        res.json(dislikes);
+    })
+ 
+ });
 
 
 
