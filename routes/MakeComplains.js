@@ -20,7 +20,6 @@ complainData = {
    longitude: '',
    latitude: '',
    isViwed:'',
-   status: '',
    isAccepted: '',
 }
 
@@ -82,7 +81,6 @@ complains.post('/complain', (req, res) => {
       longitude: req.body.longitude,
       latitude: req.body.latitude,
       isViwed:false,
-      status: false,
       isAccepted: false
    }
 

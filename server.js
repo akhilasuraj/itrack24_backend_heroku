@@ -21,6 +21,7 @@
  var GetPosts=require("./routes/GetPosts");
  var Charts=require("./routes/Charts");
  var Notifications=require("./routes/Notifications");
+ var Admin=require("./routes/Admin");
 
 
 app.use("/users", Users);
@@ -30,6 +31,7 @@ app.use("/users", MakePosts);
 app.use("/users", GetPosts);
 app.use("/users", Charts);
 app.use("/users", Notifications);
+app.use("/admin", Admin);
 
 
 app.use(express.static(path.join(__dirname,'propics')));

@@ -39,6 +39,12 @@ module.exports = db.sequelize.define(
         },
         isViwed:{
             type: Sequelize.BOOLEAN
+        },
+        isAccepted:{
+            type: Sequelize.BOOLEAN
+        },
+        isRejected:{
+            type: Sequelize.BOOLEAN
         }
 
     },

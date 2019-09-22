@@ -65,7 +65,9 @@ PostDetails = {
     PostDisLike:0,
     PostDate: '',
     PostTime: '',
-    isViwed:false
+    isViwed:false,
+    isAccepted:false,
+    isRejected:false
 
 }
 //ADD_CURRENT_DATE
@@ -102,7 +104,8 @@ posts.post('/addpost', (req, res, err) => {
         PostImg:Img_Data.post_img,
         PostDate: getDate(),            
         PostTime: getTime(),
-        isViwed:false
+        isViwed:false,
+        isAccepted:false
     }
     if (PostDetails) {
         console.log(PostDetails);

@@ -13,13 +13,18 @@ PostDetails = {
     PostImg:'',
     PostDate: '',
     PostTime: '',
-    isViwed:''
+    isViwed:'',
+    isAccepted:'',
+    isRejected:''
     
 }
 
 //GET_POSTS
 getposts.get('/viewposts',(req,res,err)=>{
     Post.findAll({
+        where:{
+            isAccepted:true
+        },
         order: [
             ['id','DESC'],
         ],
