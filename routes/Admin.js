@@ -47,12 +47,12 @@ admin.post("/registerSupervisor", (req, res, err) => {
 });
 
 //ADMIN_NOTIFICATIONS
-admin.post("/compcount", (req, res) => {
+admin.get("/compcount", (req, res) => {
     Complain.count({
         where: {
             [Sequelize.Op.or]: [
                 { isAccepted: false },
-                { isViwed: false }
+                { isViwedByAdmin: false }
             ]
         }
     }).then((respond) => {
@@ -60,12 +60,12 @@ admin.post("/compcount", (req, res) => {
     })
 });
 
-admin.post("/postcount", (req, res) => {
+admin.get("/postcount", (req, res) => {
     Post.count({
         where: {
             [Sequelize.Op.or]: [
                 { isAccepted: false },
-                { isViwed: false }
+                { isViwedByAdmin: false }
             ]
         }
     }).then((respond) => {
@@ -74,42 +74,79 @@ admin.post("/postcount", (req, res) => {
 });
 
 //VIEW_NOTIFICATIONS
-admin.post("/viewcomp", (req, res) => {
-    const id = req.body.compid; //ID_RECEIVED_BY_CLICKING_NOTIFICATION
+admin.get("/viewcompNotification", (req, res) => {
+    Complain.findAll({
+        where: {
+            [Sequelize.Op.or]: [
+                { isAccepted: false },
+                { isViwedByAdmin: false }
+            ]
+        }, order: [
+            ['id', 'DESC']
+        ]
+    }).then((respond) => {
+        res.json(respond);
+    });
+});
+
+
+admin.get("/viewpostNotification", (req, res) => {
+    Post.findAll({
+        where: {
+            [Sequelize.Op.or]: [
+                { isAccepted: false },
+                { isViwedByAdmin: false }
+            ]
+        }, order: [
+            ['id', 'DESC']
+        ]
+    }).then((result) => {
+        res.json(result);
+    });
+});
+
+
+//VEW_RELEVANT_COMPLAIN
+admin.post("/viewcomplainMore", (req, res) => {
+    const id = req.body.id;
     Complain.findOne({
         where: {
             id: id
         }
     }).then((result) => {
         Complain.update({
-            isViwed: true   //AFTER_VIEW_SET_ISVIEWD_TRUE
-        }, {
-            where: {
-                id: id
-            }
-        });
+            isViwedByAdmin: true
+        },
+            {
+                where: {
+                    id: id
+                }
+            })
         res.json(result);
     });
 });
 
-
-admin.post("/viewpost", (req, res) => {
-    const id = req.body.postid; //ID_RECEIVED_BY_CLICKING_NOTIFICATION
+//VIEW_RELEVANT_POST
+admin.post("/viewpostMore", (req, res) => {
+    const id = req.body.id;
     Post.findOne({
         where: {
             id: id
         }
     }).then((result) => {
         Post.update({
-            isViwed: true    //AFTER_VIEW_SET_ISVIEWD_TRUE
-        }, {
-            where: {
-                id: id
-            }
-        });
+            isViwedByAdmin: true
+        },
+            {
+                where: {
+                    id: id
+                }
+            })
         res.json(result);
     });
 });
+
+
 
 //ACCEPT_USER_COMPLAIN
 admin.post("/acceptcomp", (req, res) => {
@@ -163,6 +200,18 @@ admin.post("/rejectpost", (req, res) => {
 
 });
 
+//GET_ACCEPTED_COMPLAINS
+admin.get("/acceptedcomplains",(req,res)=>{
+    Complain.findAll({
+        where:{
+            isAccepted:true,
+            isAssigned:false
+        }
+    }).then((result)=>{
+        res.json(result);
+    })
+})
+
 //SELECT_SUITABLE_JOB_CATEGORY_SUPERVISORS
 admin.post("/selectsupervisor", (req, res) => {
     const category = req.body.category;
@@ -181,36 +230,43 @@ admin.post("/selectsupervisor", (req, res) => {
     });
 });
 
-//ADD_NEW_JOB_FOR_NEW_COMPLAIN
+//ADD_NEW_JOB_FOR_NEW_COMPLAIN_&_ASSIGN_SUPERVISOR
 admin.post("/addjob", (req, res) => {
     const jobData = {
-        complainID: req.body.id,
+        complainID: req.body.complainID,
         supervisorID: req.body.supervisorID,
         workStatus: 'in progress',
         isAccepted: false,
+        isViwed: false,
         isSatisfied: false
     }
 
     Job.create(jobData)
         .then((result) => {
             if (result) {
+                Supervisor.update({
+                    availability: false
+                }, {
+                    where: {
+                        id: req.body.supervisorID
+                    }
+                });
+
+                Complain.update({
+                    isAssigned:true
+                },{
+                    where:{
+                        id:req.body.complainID
+                    }
+                })
                 res.json(result);
-                console.log("JOB_CREATED_SUCCESFULLY");
+                console.log("NEW_JOB_CREATED_SUCCESFULLY");
             }
             else {
                 console.log("JOB_CREATION_FAILED");
             }
         });
 });
-
-
-
-
-
-
-
-
-
 
 
 module.exports = admin

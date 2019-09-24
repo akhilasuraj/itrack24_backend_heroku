@@ -73,11 +73,9 @@ users.post('/register', (req, res) => {
     User.findOne({
         where: {
             email: req.body.email
-
         }
 
-    })
-        .then((user) => {
+    }).then((user) => {
             console.log("user data ->>>>>>>>>>>>>>>")
             if (!user) {
                 const hash = bcrypt.hashSync(userData.password, 10)
@@ -96,7 +94,7 @@ users.post('/register', (req, res) => {
                                 host: "smtp.gmail.com",
                                 auth: {
                                     user: "dilina5860717@gmail.com", // generated ethereal user
-                                    pass: "##7@dilina" // generated ethereal password
+                                    pass: "dIlI1@@$$" // generated ethereal password
                                 }
                             });
 
@@ -152,7 +150,8 @@ users.post('/login', (req, res) => {
     User.findOne({
         where: {
             email: req.body.email,
-            isActivated: true
+            isActivated: true,
+
             //req.body kiyana eke thiyenne body parameters
             //req.query kiyana eke thiyenne query parameters
             //postman eken eeka select karala yawanna puluwan. query parameters enne url ekath ekkamai
@@ -161,13 +160,12 @@ users.post('/login', (req, res) => {
     })
         .then(user => {
             if (user) {
-                let id = user.id;
-                console.log(id);
+                // let id = user.id;
                 if (bcrypt.compareSync(req.body.password, user.password)) {
                     let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
                         expiresIn: 1440
                     })
-                    res.json({ token: token, firstName: user.first_name, lastName: user.last_name, userId: user.id })
+                    res.json({ token: token, user_type:user.user_type ,firstName: user.first_name, lastName: user.last_name, userId: user.id })
                 } else {
                     res.json({ error: 'INVALID_PASSWORD' })
                 }
@@ -261,7 +259,7 @@ users.post('/forgot', (req, res, err) => {
                         host: "smtp.gmail.com",
                         auth: {
                             user: "dilina5860717@gmail.com", // generated ethereal user
-                            pass: "##7@dilina" // generated ethereal password
+                            pass: "dIlI1@@$$" // generated ethereal password
                         }
                     });
 

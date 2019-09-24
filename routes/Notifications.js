@@ -13,7 +13,7 @@ notifications.post('/getPostCount', (req, res) => {
         where: {
             [Sequelize.Op.or]: [
                 { isAccepted: true },
-                { isViwed: false }
+                { isViwedByUser: false }
             ]
         }
     }).then((result) => {
@@ -29,7 +29,7 @@ notifications.post('/getCompCount', (req, res) => { //mekata twa work 'done' krp
         where: {
             [Sequelize.Op.or]: [
                 { isAccepted: true },
-                { isViwed: false }
+                { isViwedByUser: false }
             ]
         }
     }).then((respond) => {
@@ -39,67 +39,80 @@ notifications.post('/getCompCount', (req, res) => { //mekata twa work 'done' krp
 })
 
 
-//VIEW_ACCEPTED_POST_OF_USER
+//VIEW_POST_NOTIFICATIONS_OF_USER
 notifications.post('/viewPostNotifications', (req, res) => {
-    const id = req.body.id;//ID_OF_THE_POST
     Post.findAll({
         where: {
-            id: id
-        }
-    })
-        .then((respond) => {
-            Post.update({         //AFTER_VIEW_SET_ISVIEWD_TRUE
-                isViwed: true
-            }, {
-                where: {
-                    id: id
-                }
-            });
-            res.json(respond);
-        });
+            [Sequelize.Op.or]: [
+                { isAccepted: true },
+                { isViwedByUser: false }
+            ]
+        }, order: [
+            ['id', 'DESC']
+        ]
+    }).then((respond) => {
+        res.json(respond);
+    });
 });
 
 
 
-//VIEW_ACCEPTED_COMPLAIN_OF_USER
+//VIEW_COMPLAIN_NOTIFICATIONS_OF_USER
 notifications.post('/viewCompNotifications', (req, res) => {
-    const id = req.body.id; //ID_OF_THE_COMPLAIN
     Complain.findAll({
+        where: {
+            [Sequelize.Op.or]: [
+                { isAccepted: true },
+                { isViwedByUser: false }
+            ]
+        },
+        order: [
+            ['id', 'DESC']
+        ]
+    }).then((respond) => {
+        res.json(respond);
+    });
+});
+
+//VIEW_RELEVANT_POST
+notifications.post("/complainMore", (req, res) => {
+    const id = req.body.id;
+    Complain.findOne({
         where: {
             id: id
         }
-    })
-        .then((respond) => {
-            Complain.update({
-                isViwed: true    //AFTER_VIEW_SET_ISVIEWD_TRUE
-            }, {
+    }).then((result) => {
+        Complain.update({
+            isViwedByUser: true
+        },
+            {
                 where: {
                     id: id
                 }
-            });
-            res.json(respond);
-        });
+            })
+        res.json(result);
+    });
 });
 
-
-
-//GET_COMPLAINS_OF_OTHER_USERS_AS_DESC_ORDER
-// notifications.post('/viewCompNotifications',(req,res)=>{
-//     Complain.findAll({
-//         where:{
-//             user_id:{
-//                 [Sequelize.Op.ne]:[req.body.user_id] NOT_QUERY Op=OPTION ne=NOT
-//             },
-//             isViwed:false,
-//         },
-//         order:[
-//             ['id','DESC']
-//         ]
-//     }).then((respond)=>{
-//         res.json(respond);
-//     })
-// })
-
+//VIEW_RELEVANT_COMPLAIN
+notifications.post("/postMore", (req, res) => {
+    const id = req.body.id;
+    Post.findOne({
+        where: {
+            id: id
+        }
+    }).then((result) => {
+        Post.update({
+            isViwedByUser: true
+        },
+            {
+                where: {
+                    id: id
+                }
+            })
+        res.json(result);
+    });
+});
 
 
 module.exports = notifications

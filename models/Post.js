@@ -37,9 +37,14 @@ module.exports = db.sequelize.define(
         PostTime:{
             type: Sequelize.TIME
         },
-        isViwed:{
+        isViwedByUser:{
             type: Sequelize.BOOLEAN
         },
+
+        isViwedByAdmin:{
+            type: Sequelize.BOOLEAN
+        },
+
         isAccepted:{
             type: Sequelize.BOOLEAN
         },

@@ -19,8 +19,10 @@ complainData = {
    time: '',
    longitude: '',
    latitude: '',
-   isViwed:'',
+   isViwedByUser:'',
+   isViwedByAdmin:'',
    isAccepted: '',
+   isAssigned:''
 }
 
 const imageData = {
@@ -80,8 +82,10 @@ complains.post('/complain', (req, res) => {
       time: req.body.time,
       longitude: req.body.longitude,
       latitude: req.body.latitude,
-      isViwed:false,
-      isAccepted: false
+      isViwedByUser:false,
+      isViwedByAdmin:false,
+      isAccepted: false,
+      isAssigned:false
    }
 
    console.log(complainData)
