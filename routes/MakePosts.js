@@ -7,13 +7,6 @@ const Post = require("../models/Post");
 const bodyParser = require('body-parser');
 posts.use(cors());
 
-//ADDING POST IMAGE DATA
-const Img_Data = {
-    postID: 0,
-    userID: 0,
-    post_img: ''
-}
-
 var storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './postImages');
@@ -42,17 +35,6 @@ var upload = multer({
     limits: { fileSize: '50M' }
 });
 
-//ADD_IMAGE_TO_POST
-posts.post('/addimage', upload.single('postImg'), async function (req, res, files) {
-    if (!req.file) {
-        console.log('FILE_NOT_RECEIVED');
-    }
-    else {
-        Img_Data.post_img = req.file.filename;
-        res.json(Img_Data.post_img);
-        console.log(Img_Data.post_img);
-    }
-});
 
 //ADDING POST DATA
 PostDetails = {
@@ -95,14 +77,14 @@ function getTime() {
 
 }
 //ADD_POST
-posts.post('/addpost', (req, res, err) => {
+posts.post('/addpost',upload.single('postImg'), (req, res, err) => {
     const PostDetails = {
         UserID: req.body.UserID,
         FirstName: req.body.FirstName,
         LastName: req.body.LastName,
         PostText: req.body.PostText,
         PostTitle: req.body.PostTitle,
-        PostImg:Img_Data.post_img,
+        PostImg:req.file.filename,
         PostDate: getDate(),            
         PostTime: getTime(),
         isViwedByUser:false,
@@ -124,7 +106,7 @@ posts.post('/addpost', (req, res, err) => {
     else {
         console.log('POST_NOT_RECEIVED');
     }
-})
+});
 
 
 

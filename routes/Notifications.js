@@ -3,6 +3,7 @@ const notifications = express.Router();
 const cors = require("cors");
 const Post = require("../models/Post");
 const Complain = require("../models/Complain");
+const Job = require("../models/job");
 notifications.use(cors());
 const Sequelize = require('sequelize');
 
@@ -20,7 +21,7 @@ notifications.post('/getPostCount', (req, res) => {
         console.log(result);
         res.json(result);
     })
-})
+});
 
 
 //USER_NOTIFICATION_COUNT_FOR_COMPLAIN
@@ -36,7 +37,19 @@ notifications.post('/getCompCount', (req, res) => { //mekata twa work 'done' krp
         console.log(respond);
         res.json(respond);
     })
-})
+});
+
+//COMPLETED_COMPLAINS_NOTIFICATIONS *************
+notifications.post('/getcompletedcomplains',(req,res)=>{
+     Job.count({
+        where: {
+            [Sequelize.Op.or]: [
+                { isAccepted: true },
+                { isViwedByUser: false }
+            ]
+        }
+     })
+});
 
 
 //VIEW_POST_NOTIFICATIONS_OF_USER

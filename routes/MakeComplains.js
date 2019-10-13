@@ -25,9 +25,6 @@ complainData = {
    isAssigned:''
 }
 
-const imageData = {
-   comp_img: ''
-}
 
 
 var storage = multer.diskStorage({
@@ -56,25 +53,13 @@ var upload = multer({
    limits: { fileSize: '10M' }
 });
 
-complains.post('/upload-image', upload.single('compImg'), async function (req, res, files) {
-   if (!req.file) {
-      console.log('FILE_NOT_RECEIVED');
-   }
-   else {
-      imageData.comp_img = req.file.filename;
-      res.json(imageData.comp_img);
-      console.log(imageData.comp_img);
-   }
-});
-
-
 //ADD_COMPLAIN
-complains.post('/complain', (req, res) => {
+complains.post('/complain', upload.single('compImg'), (req, res) => {
    const complainData = {
       user_id: req.body.user_id,
       category: req.body.category,
       description: req.body.description,
-      complainImg: imageData.comp_img,
+      complainImg:  req.file.filename,
       address1: req.body.address1,
       address2: req.body.address2,
       district: req.body.district,
