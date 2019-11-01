@@ -93,7 +93,7 @@ proimage.post('/viewproimage',(req,res)=>{
       res.json(result);
       console.log("HERE_YOUR_PROFILE_IMAGE");
   })
-})
+});
 
 
 module.exports=proimage

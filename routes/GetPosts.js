@@ -19,7 +19,7 @@ PostDetails = {
     
 }
 
-//GET_POSTS
+//GET_ALL_POSTS
 getposts.get('/viewposts',(req,res,err)=>{
     Post.findAll({
         where:{
@@ -69,27 +69,27 @@ getposts.post('/deletepost',(req,res)=>{
 //GET_SELECTED_POST
 getposts.post('/getselectedpost',(req,res)=>{
     console.log(req.body.userid);
-    console.log(req.body.postid);
-
     Post.findOne({
         where:{
-            id:req.body.postid,
-            UserID:req.body.userid
+            id:req.body.id
         }
     }).then((result)=>{
         res.json(result);
         console.log("THIS_IS_SELECTED_NOTIFICATION_POST")
         if(result){
         Post.update({
-            isViwed:true
+            isViwedByUser : true
         },{
             where:{
-                id:req.body.postid
+                id:req.body.id
             }
-        })
+        });
     }
-    })
-})
+    else{
+        console.log("error");
+    }
+    });
+});
 
 
 

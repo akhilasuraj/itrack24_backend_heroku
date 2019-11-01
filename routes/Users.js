@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt")
 var async = require("async");
 const nodemailer = require("nodemailer");
 const User = require("../models/User")
+const ProImage = require("../models/ProfileImage")
 var multer = require("multer");
 const uuidv1 = require('uuid/v1');
 users.use(cors())
@@ -163,7 +164,7 @@ users.post('/login', (req, res) => {
                 // let id = user.id;
                 if (bcrypt.compareSync(req.body.password, user.password)) {
                     let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
-                        expiresIn: 1440
+                        expiresIn: '1h'
                     })
                     res.json({ token: token, user_type:user.user_type ,firstName: user.first_name, lastName: user.last_name, userId: user.id })
                 } else {
@@ -214,22 +215,26 @@ users.post('/editprofile', (req, res) => {
             id: req.body.id
         }
     })
-
-    User.findOne({
-        where: {
-            email: req.body.email,
-
-        }
-    })
-        .then(user => {
-            let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
-                expiresIn: 1440
+    .then(result=>{
+        User.findOne({
+            where: {
+                email: req.body.email,
+    
+            }
+        })
+            .then(user => {
+                let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
+                    expiresIn: 1440
+                })
+                res.json({ token: token })
             })
-            res.json({ token: token })
-        })
-        .catch(err => {
-            res.send('error:' + err)
-        })
+            .catch(err => {
+                res.send('error:' + err)
+            })
+
+    })
+
+   
 
 })
 
@@ -330,6 +335,17 @@ users.post('/reset', (req, res, err) => {
 
 })
 
+users.post('/viewnavimage',(req,res)=>{
+  const id = req.body.id;
+  ProImage.findOne({
+      where:{
+          U_id:id
+      }
+  }).then((result)=>{
+      res.json(result);
+      console.log(result);
+  });
+})
 
 
 module.exports = users

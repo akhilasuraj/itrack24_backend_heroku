@@ -17,20 +17,10 @@ module.exports = db.sequelize.define(
             type: Sequelize.STRING
         },
 
-        isAccepted: {
+        isWorkOn: {
             type: Sequelize.BOOLEAN
         },
-
-        isViewed: {
-            type: Sequelize.BOOLEAN
-        },
-
         isSatisfied: {
             type: Sequelize.BOOLEAN
         }
-    }
-
-
-
-
-)
+    });

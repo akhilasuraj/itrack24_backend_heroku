@@ -3,7 +3,6 @@ const complains = express.Router();
 const multer = require('multer');
 const cors = require("cors");
 const Complain = require("../models/Complain");
-const Image = require('../models/Image');
 complains.use(cors());
 
 
@@ -22,6 +21,7 @@ complainData = {
    isViwedByUser:'',
    isViwedByAdmin:'',
    isAccepted: '',
+   isRejected:'',
    isAssigned:''
 }
 
@@ -70,6 +70,7 @@ complains.post('/complain', upload.single('compImg'), (req, res) => {
       isViwedByUser:false,
       isViwedByAdmin:false,
       isAccepted: false,
+      isRejected:false,
       isAssigned:false
    }
 

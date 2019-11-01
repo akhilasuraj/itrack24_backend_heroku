@@ -14,7 +14,7 @@ module.exports = db.sequelize.define(
         LastName: {
             type: Sequelize.STRING
         },
-        PostText:{
+        PostContent:{
             type: Sequelize.STRING
         },
         PostTitle:{

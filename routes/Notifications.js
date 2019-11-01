@@ -8,14 +8,14 @@ notifications.use(cors());
 const Sequelize = require('sequelize');
 
 
-//USER_NOTIFICATION_COUNT_FOR_POSTS
+
+//ADMIN_REJECTED_||_ACCEPTED_POST_COUNT
 notifications.post('/getPostCount', (req, res) => {
+    const UserID = req.body.UserID;
     Post.count({
         where: {
-            [Sequelize.Op.or]: [
-                { isAccepted: true },
-                { isViwedByUser: false }
-            ]
+            UserID: UserID,
+            isViwedByUser: false
         }
     }).then((result) => {
         console.log(result);
@@ -24,14 +24,13 @@ notifications.post('/getPostCount', (req, res) => {
 });
 
 
-//USER_NOTIFICATION_COUNT_FOR_COMPLAIN
+//ADMIN_REJECTED_||_ACCEPTED_COMPLAIN_COUNT
 notifications.post('/getCompCount', (req, res) => { //mekata twa work 'done' krpu notification ennt oni
+    const user_id = req.body.user_id;
     Complain.count({
         where: {
-            [Sequelize.Op.or]: [
-                { isAccepted: true },
-                { isViwedByUser: false }
-            ]
+            user_id: user_id,
+            isViwedByUser: false
         }
     }).then((respond) => {
         console.log(respond);
@@ -39,27 +38,26 @@ notifications.post('/getCompCount', (req, res) => { //mekata twa work 'done' krp
     })
 });
 
-//COMPLETED_COMPLAINS_NOTIFICATIONS *************
-notifications.post('/getcompletedcomplains',(req,res)=>{
-     Job.count({
-        where: {
-            [Sequelize.Op.or]: [
-                { isAccepted: true },
-                { isViwedByUser: false }
-            ]
-        }
-     })
-});
+// //COMPLETED_COMPLAINS_NOTIFICATIONS *************
+// notifications.post('/getcompletedcomplains',(req,res)=>{
+//      Job.count({
+//         where: {
+//             [Sequelize.Op.or]: [
+//                 { isAccepted: true },
+//                 { isViwedByUser: false }
+//             ]
+//         }
+//      })
+// });
 
 
-//VIEW_POST_NOTIFICATIONS_OF_USER
+//VIEW_POST_NOTIFICATIONS_FOR_USER
 notifications.post('/viewPostNotifications', (req, res) => {
+    const UserID = req.body.UserID;
     Post.findAll({
         where: {
-            [Sequelize.Op.or]: [
-                { isAccepted: true },
-                { isViwedByUser: false }
-            ]
+            UserID: UserID,
+            isViwedByUser: false
         }, order: [
             ['id', 'DESC']
         ]
@@ -70,14 +68,13 @@ notifications.post('/viewPostNotifications', (req, res) => {
 
 
 
-//VIEW_COMPLAIN_NOTIFICATIONS_OF_USER
+//VIEW_COMPLAIN_NOTIFICATIONS_FOR_USER
 notifications.post('/viewCompNotifications', (req, res) => {
+    const user_id = req.body.user_id;
     Complain.findAll({
         where: {
-            [Sequelize.Op.or]: [
-                { isAccepted: true },
-                { isViwedByUser: false }
-            ]
+            user_id: user_id,
+            isViwedByUser: false
         },
         order: [
             ['id', 'DESC']
@@ -87,7 +84,7 @@ notifications.post('/viewCompNotifications', (req, res) => {
     });
 });
 
-//VIEW_RELEVANT_POST
+//GO_INTO_POST
 notifications.post("/complainMore", (req, res) => {
     const id = req.body.id;
     Complain.findOne({
@@ -107,7 +104,7 @@ notifications.post("/complainMore", (req, res) => {
     });
 });
 
-//VIEW_RELEVANT_COMPLAIN
+//GO_INTO_COMPLAIN
 notifications.post("/postMore", (req, res) => {
     const id = req.body.id;
     Post.findOne({

@@ -6,8 +6,10 @@ admin.use(cors());
 const Complain = require("../models/Complain");
 const Post = require("../models/Post");
 const Supervisor = require("../models/Supervisor");
+const User = require("../models/User");
 const Job = require("../models/job");
 const Sequelize = require('sequelize');
+
 
 
 
@@ -20,8 +22,7 @@ admin.post("/registerSupervisor", (req, res, err) => {
         email: req.body.email,
         password: req.body.password,
         jobcategory1: req.body.jobcategory1,
-        jobcategory2: req.body.jobcategory2,
-        availability: true
+        jobcategory2: req.body.jobcategory2
     }
 
     Supervisor.findOne({
@@ -37,8 +38,43 @@ admin.post("/registerSupervisor", (req, res, err) => {
             SuperData.password = hash;
             Supervisor.create(SuperData)
                 .then((data) => {
-                    res.json(data);
+                    res.json({ Cat1: data.jobcategory1, Cat2: data.jobcategory2, Sid: data.id }); //SEND_SUPERVISOR_JOB_CATEGORY_AND_ID
                     console.log("SUPERVISOR_CREATED_SUCCESFULLY")
+                });
+        }
+    }).catch((err) => {
+        res.json(err);
+    });
+});
+
+
+
+
+//REGISTER_WORKER
+admin.post("/registerWorker", (req, res, err) => {
+    const WorkerData = {
+        LastName: req.body.LastName,
+        Nicno: req.body.Nicno,
+        Contact: req.body.Contact,
+        JobType1: req.body.JobType1,
+        JobType2: req.body.JobType2,
+        availability: true
+    }
+
+    Worker.findOne({
+        where: {
+            Nicno: req.body.Nicno
+        }
+    }).then((data) => {
+        if (data) {
+            console.log("WORKER_ALREADY_REGISTERED");
+        }
+        else {
+            Supervisor.create(WorkerData)
+                .then((data) => {
+                    if (data) {
+                        console.log("SUPERVISOR_CREATED_SUCCESFULLY");
+                    }
                 });
         }
     }).catch((err) => {
@@ -75,13 +111,17 @@ admin.get("/postcount", (req, res) => {
 
 //VIEW_NOTIFICATIONS
 admin.get("/viewcompNotification", (req, res) => {
+    User.hasMany(Complain, { foreignKey: 'user_id' })
+    Complain.belongsTo(User, { foreignKey: 'user_id' }) //JOIN_USER_AND_COMPLAIN_TABLE
     Complain.findAll({
         where: {
             [Sequelize.Op.or]: [
                 { isAccepted: false },
                 { isViwedByAdmin: false }
             ]
-        }, order: [
+        },
+        include: [User],
+        order: [
             ['id', 'DESC']
         ]
     }).then((respond) => {
@@ -106,9 +146,12 @@ admin.get("/viewpostNotification", (req, res) => {
 });
 
 
-//VEW_RELEVANT_COMPLAIN
+//GO_INTO_COMPLAIN
 admin.post("/viewcomplainMore", (req, res) => {
     const id = req.body.id;
+    User.hasMany(Complain, { foreignKey: 'user_id' })
+    Complain.belongsTo(User, { foreignKey: 'user_id' }) //JOIN_USER_AND_COMPLAIN_TABLE
+
     Complain.findOne({
         where: {
             id: id
@@ -126,7 +169,7 @@ admin.post("/viewcomplainMore", (req, res) => {
     });
 });
 
-//VIEW_RELEVANT_POST
+//GO_INTO_POST
 admin.post("/viewpostMore", (req, res) => {
     const id = req.body.id;
     Post.findOne({
@@ -165,6 +208,24 @@ admin.post("/acceptcomp", (req, res) => {
 
 });
 
+
+//REJECT_USER_COMPLAIN
+admin.post("/rejectcomp", (req, res) => {
+    const id = req.body.id;
+    Complain.update({
+        isRejected: true
+    },
+        {
+            where: {
+                id: id
+            }
+        }).then((result) => {
+            res.json(result); //USING_THIS_RESPOND_CAN_NOTIFIY_THE_USER
+            console.log("YOUR_COMPLAINE_HAS_BEEN_REJECTED");
+        })
+
+});
+
 //ACCEPT_USER_POST
 admin.post("/acceptpost", (req, res) => {
     const id = req.body.id;
@@ -198,74 +259,6 @@ admin.post("/rejectpost", (req, res) => {
             console.log("YOUR_POST_HAS_BEEN_REJECTED");
         })
 
-});
-
-//GET_ACCEPTED_COMPLAINS
-admin.get("/acceptedcomplains",(req,res)=>{
-    Complain.findAll({
-        where:{
-            isAccepted:true,
-            isAssigned:false
-        }
-    }).then((result)=>{
-        res.json(result);
-    })
-})
-
-//SELECT_SUITABLE_JOB_CATEGORY_SUPERVISORS
-admin.post("/selectsupervisor", (req, res) => {
-    const category = req.body.category;
-    console.log(category);
-    Supervisor.findAll({
-        where: {
-            [Sequelize.Op.or]: [
-                { jobcategory1: category },
-                { jobcategory2: category }
-            ],
-            availability: true
-        }
-    }).then((result) => {
-        console.log("HERE_RELEVANT_SUPERVISORS_FOR_COMPLAIN")
-        res.json(result);
-    });
-});
-
-//ADD_NEW_JOB_FOR_NEW_COMPLAIN_&_ASSIGN_SUPERVISOR
-admin.post("/addjob", (req, res) => {
-    const jobData = {
-        complainID: req.body.complainID,
-        supervisorID: req.body.supervisorID,
-        workStatus: 'in progress',
-        isAccepted: false,
-        isViwed: false,
-        isSatisfied: false
-    }
-
-    Job.create(jobData)
-        .then((result) => {
-            if (result) {
-                Supervisor.update({
-                    availability: false
-                }, {
-                    where: {
-                        id: req.body.supervisorID
-                    }
-                });
-
-                Complain.update({
-                    isAssigned:true
-                },{
-                    where:{
-                        id:req.body.complainID
-                    }
-                })
-                res.json(result);
-                console.log("NEW_JOB_CREATED_SUCCESFULLY");
-            }
-            else {
-                console.log("JOB_CREATION_FAILED");
-            }
-        });
 });
 
 

@@ -40,7 +40,8 @@ var upload = multer({
 PostDetails = {
     UserID: 0,
     FirstName: '',
-    PostText: '',
+    LastName:'',
+    PostContent: '',
     PostTitle:'',
     PostImg:'',
     PostLike:0,
@@ -82,14 +83,15 @@ posts.post('/addpost',upload.single('postImg'), (req, res, err) => {
         UserID: req.body.UserID,
         FirstName: req.body.FirstName,
         LastName: req.body.LastName,
-        PostText: req.body.PostText,
+        PostContent: req.body.PostContent,
         PostTitle: req.body.PostTitle,
         PostImg:req.file.filename,
         PostDate: getDate(),            
         PostTime: getTime(),
         isViwedByUser:false,
         isViwedByAdmin:false,
-        isAccepted:false
+        isAccepted:false,
+        isRejected:false,
     }
     if (PostDetails) {
         console.log(PostDetails);

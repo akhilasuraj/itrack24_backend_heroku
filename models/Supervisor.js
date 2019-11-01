@@ -32,12 +32,7 @@ module.exports = db.sequelize.define(
       
       jobcategory2: {
          type: Sequelize.STRING
-      },
-
-      availability: {
-         type: Sequelize.BOOLEAN
-      },
-
+      }
    }
 
 )
