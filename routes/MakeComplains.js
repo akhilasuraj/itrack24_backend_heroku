@@ -40,7 +40,7 @@ var storage = multer.diskStorage({
       if (file.mimetype === 'image/png') {
          filetype = 'png';
       }
-      if (file.mimetype === 'image/png') {
+      if (file.mimetype === 'image/jpeg') {
          filetype = 'jpeg';
       }
       cb(null, file.originalname + '-' + Date.now() + '.' + filetype);
@@ -98,7 +98,32 @@ complains.post('/mycomplains', (req, res) => {
       .then((respond) => {
          res.json(respond)
       })
-})
+});
+
+//GET_SELECTED_COMPLAIN
+complains.post('/getselectedcomplain',(req,res)=>{
+   console.log(req.body.userid);
+   Complain.findOne({
+       where:{
+           id:req.body.id
+       }
+   }).then((result)=>{
+       res.json(result);
+       console.log("THIS_IS_SELECTED_NOTIFICATION_COMPLAINS")
+       if(result){
+       Complain.update({
+           isViwedByUser : true
+       },{
+           where:{
+               id:req.body.id
+           }
+       });
+   }
+   else{
+       console.log("error");
+   }
+   });
+});
 
 
 module.exports = complains

@@ -7,6 +7,7 @@ const Complain = require("../models/Complain");
 const Post = require("../models/Post");
 const Supervisor = require("../models/Supervisor");
 const User = require("../models/User");
+const Worker = require("../models/Worker");
 const Job = require("../models/job");
 const Sequelize = require('sequelize');
 
@@ -38,7 +39,7 @@ admin.post("/registerSupervisor", (req, res, err) => {
             SuperData.password = hash;
             Supervisor.create(SuperData)
                 .then((data) => {
-                    res.json({ Cat1: data.jobcategory1, Cat2: data.jobcategory2, Sid: data.id }); //SEND_SUPERVISOR_JOB_CATEGORY_AND_ID
+                    res.json(data); //SEND_SUPERVISOR_JOB_CATEGORY_AND_ID
                     console.log("SUPERVISOR_CREATED_SUCCESFULLY")
                 });
         }
@@ -59,6 +60,7 @@ admin.post("/registerWorker", (req, res, err) => {
         JobType1: req.body.JobType1,
         JobType2: req.body.JobType2,
         availability: true
+     
     }
 
     Worker.findOne({
@@ -70,10 +72,10 @@ admin.post("/registerWorker", (req, res, err) => {
             console.log("WORKER_ALREADY_REGISTERED");
         }
         else {
-            Supervisor.create(WorkerData)
+            Worker.create(WorkerData)
                 .then((data) => {
                     if (data) {
-                        console.log("SUPERVISOR_CREATED_SUCCESFULLY");
+                        console.log("WORKER_CREATED_SUCCESFULLY");
                     }
                 });
         }

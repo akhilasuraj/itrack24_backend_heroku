@@ -86,9 +86,9 @@ users.post('/register', (req, res) => {
                         let token = jwt.sign(user.dataValues,
                             process.env.SECRET_KEY,
                             {
-                                expiresIn: 1440
+                                expiresIn: '1h'
                             });
-                        res.json({ firstName: user.first_name, lastName: user.last_name, userId: user.id }); //REMOVE_THE_TOKEN_FROM_JSON
+                        res.json(user); //REMOVE_THE_TOKEN_FROM_JSON
 
                         async function main() {                           //SEND_EMAIL_TO_GIVEN_USER_EMAIL
                             let transporter = nodemailer.createTransport({
@@ -118,7 +118,8 @@ users.post('/register', (req, res) => {
                         res.send('error' + err)
                     })
             } else {
-                res.json({ error: 'USER_ALREADY_EXISTS' })
+              
+                console.log("user exist already");
             }
         })
         .catch(err => {
