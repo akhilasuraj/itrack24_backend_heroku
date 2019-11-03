@@ -45,6 +45,11 @@ module.exports = db.sequelize.define(
       latitude: {
          type: Sequelize.FLOAT
       },
+
+      sectionName:{
+         type: Sequelize.STRING
+      },
+
       isViwedByUser: {
          type: Sequelize.BOOLEAN
       },

@@ -3,6 +3,8 @@ const complains = express.Router();
 const multer = require('multer');
 const cors = require("cors");
 const Complain = require("../models/Complain");
+const Section = require("../models/Section");
+const Sequelize = require('sequelize');
 complains.use(cors());
 
 
@@ -18,11 +20,11 @@ complainData = {
    time: '',
    longitude: '',
    latitude: '',
-   isViwedByUser:'',
-   isViwedByAdmin:'',
+   isViwedByUser: '',
+   isViwedByAdmin: '',
    isAccepted: '',
-   isRejected:'',
-   isAssigned:''
+   isRejected: '',
+   isAssigned: ''
 }
 
 
@@ -55,31 +57,54 @@ var upload = multer({
 
 //ADD_COMPLAIN
 complains.post('/complain', upload.single('compImg'), (req, res) => {
-   const complainData = {
-      user_id: req.body.user_id,
-      category: req.body.category,
-      description: req.body.description,
-      complainImg:  req.file.filename,
-      address1: req.body.address1,
-      address2: req.body.address2,
-      district: req.body.district,
-      date: req.body.date,
-      time: req.body.time,
-      longitude: req.body.longitude,
-      latitude: req.body.latitude,
-      isViwedByUser:false,
-      isViwedByAdmin:false,
-      isAccepted: false,
-      isRejected:false,
-      isAssigned:false
-   }
+   const category = req.body.category;
+   Section.findOne({
+      where: {
+         [Sequelize.Op.or]: [
+            { subcategory1: category },
+            { subcategory2: category },
+            { subcategory3: category }
+         ]
+      }
+   }).then(sec => {
+      if (sec) {
+         console.log(sec);
+         sectionName = sec.section_name;
+         console.log(sectionName);
 
-   console.log(complainData)
+         const complainData = {
+            user_id: req.body.user_id,
+            category: req.body.category,
+            description: req.body.description,
+            complainImg: req.file.filename,
+            address1: req.body.address1,
+            address2: req.body.address2,
+            district: req.body.district,
+            date: req.body.date,
+            time: req.body.time,
+            longitude: req.body.longitude,
+            latitude: req.body.latitude,
+            sectionName: sectionName,
+            isViwedByUser: false,
+            isViwedByAdmin: false,
+            isAccepted: false,
+            isRejected: false,
+            isAssigned: false
+         }
 
-   Complain.create(complainData)
-      .then(comp => {
-         res.send(comp)
-      })
+         console.log(complainData)
+
+         Complain.create(complainData)
+            .then(comp => {
+               res.send(comp)
+            })
+      }
+      else{
+         console.log("NO_SECTION_HAS_BEEN_MATCHED");
+      }
+   })
+
+
 
 })
 
@@ -92,8 +117,8 @@ complains.post('/mycomplains', (req, res) => {
          user_id: req.body.user_id,
       },
       order: [
-         ['id','DESC'], //GET_AS_DESCENDING_ORDER
-     ]
+         ['id', 'DESC'], //GET_AS_DESCENDING_ORDER
+      ]
    })
       .then((respond) => {
          res.json(respond)
@@ -101,27 +126,27 @@ complains.post('/mycomplains', (req, res) => {
 });
 
 //GET_SELECTED_COMPLAIN
-complains.post('/getselectedcomplain',(req,res)=>{
+complains.post('/getselectedcomplain', (req, res) => {
    console.log(req.body.userid);
    Complain.findOne({
-       where:{
-           id:req.body.id
-       }
-   }).then((result)=>{
-       res.json(result);
-       console.log("THIS_IS_SELECTED_NOTIFICATION_COMPLAINS")
-       if(result){
-       Complain.update({
-           isViwedByUser : true
-       },{
-           where:{
-               id:req.body.id
-           }
-       });
-   }
-   else{
-       console.log("error");
-   }
+      where: {
+         id: req.body.id
+      }
+   }).then((result) => {
+      res.json(result);
+      console.log("THIS_IS_SELECTED_NOTIFICATION_COMPLAINS")
+      if (result) {
+         Complain.update({
+            isViwedByUser: true
+         }, {
+            where: {
+               id: req.body.id
+            }
+         });
+      }
+      else {
+         console.log("error");
+      }
    });
 });
 
