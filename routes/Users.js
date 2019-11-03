@@ -57,7 +57,7 @@ users.post('/register', (req, res) => {
             expiresIn: '1h'/*this is option*/
         })
     const userData = {
-        user_type: req.body.user_type,
+        user_type: 'user',
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         address: req.body.address,
