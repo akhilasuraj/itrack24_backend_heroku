@@ -60,7 +60,7 @@ admin.post("/registerWorker", (req, res, err) => {
         JobType1: req.body.JobType1,
         JobType2: req.body.JobType2,
         availability: true
-     
+
     }
 
     Worker.findOne({
@@ -149,7 +149,7 @@ admin.get("/viewpostNotification", (req, res) => {
 
 
 //GO_INTO_COMPLAIN
-admin.post("/viewcomplainMore", (req, res) => {
+admin.post("/gointoComplain", (req, res) => {
     const id = req.body.id;
     User.hasMany(Complain, { foreignKey: 'user_id' })
     Complain.belongsTo(User, { foreignKey: 'user_id' }) //JOIN_USER_AND_COMPLAIN_TABLE
@@ -157,7 +157,8 @@ admin.post("/viewcomplainMore", (req, res) => {
     Complain.findOne({
         where: {
             id: id
-        }
+        },
+        include: [User]
     }).then((result) => {
         Complain.update({
             isViwedByAdmin: true
@@ -172,7 +173,7 @@ admin.post("/viewcomplainMore", (req, res) => {
 });
 
 //GO_INTO_POST
-admin.post("/viewpostMore", (req, res) => {
+admin.post("/gointoPost", (req, res) => {
     const id = req.body.id;
     Post.findOne({
         where: {
