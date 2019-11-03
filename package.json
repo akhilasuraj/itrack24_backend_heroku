@@ -4,7 +4,8 @@
   "description": "create app",
   "main": "app.js",
   "engines": {
-    "node": "6.1.0"
+    "node": "10.4.0",
+    "npm": "6.1.0"
   },
   "dependencies": {
     "async": "^3.1.0",
