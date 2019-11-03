@@ -40,15 +40,14 @@ supervisor.post("/login", (req, res, err) => {
 
 //GET_SUPERVISOR'S_RELEVANT_ALL_COMPLAINS
 supervisor.post("/getjob", (req, res) => {
-    const id = req.body.id; //SUPERVIOSR_ID
     const cat1 = req.body.jobcategory1; //SUPERVISOR_CATEGORY
     const cat2 = req.body.jobcategory2;
 
     Complain.findAll({
         where: {
             [Sequelize.Op.or]: [
-                { jobcategory1: cat1 },
-                { jobcategory2: cat2 }
+                { sectionName: cat1 },
+                { sectionName: cat2 }
             ],
             isAssigned: false,
             isAccepted: true

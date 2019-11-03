@@ -40,9 +40,10 @@ app.use(express.static(path.join(__dirname,'propics')));
 app.use(express.static(path.join(__dirname,'uploads')));
 app.use(express.static(path.join(__dirname,'postImages')));
 
-app.listen(port, function(){
+app.listen(port,function(){
 
    console.log(" Wow Server is running on port" + " " + port);
+//    'https://itrack24-backend-heroku.herokuapp.com'
 })
 
  
