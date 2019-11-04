@@ -25,7 +25,7 @@ supervisor.post("/login", (req, res, err) => {
                 let token = jwt.sign(result.dataValues, process.env.SECRET_KEY, {
                     expiresIn: 3600
                 });
-                res.json(result); //SEND_JOBCATEGORIES
+                res.json(result, {token:token}); //SEND_JOBCATEGORIES
             }
             else {
                 console.log("PASSWORD_INCORRECT");
