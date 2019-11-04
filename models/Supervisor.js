@@ -15,7 +15,7 @@ module.exports = db.sequelize.define(
       },
 
       contactno: {
-         type: Sequelize.INTEGER
+         type: Sequelize.STRING
       },
 
       email: {
