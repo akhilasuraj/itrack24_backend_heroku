@@ -66,7 +66,7 @@ users.post('/register', (req, res) => {
         password: req.body.password,
         resetPasswordToken: req.body.resetPasswordToken,
         resetPasswordExpires: req.body.resetPasswordExpires,
-        tokenid: token,
+        user_token: '',
         isActivated: false,
         created: today
     }
@@ -167,8 +167,16 @@ users.post('/login', (req, res) => {
                     let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
                         expiresIn: '1h'
                     })
+                    User.update({
+                        user_token:token
+                      },{
+                        where:{
+                            email:req.body.email //UPDATE_TOKEN_SUCCESS_HERE
+                        }
+                      })
                     res.json({ token: token, user_type:user.user_type ,firstName: user.first_name, lastName: user.last_name, userId: user.id })
-                } else {
+                }
+                 else {
                     res.json({ error: 'INVALID_PASSWORD' })
                 }
             } else {

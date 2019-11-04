@@ -151,6 +151,7 @@ admin.get("/viewpostNotification", (req, res) => {
 //GO_INTO_COMPLAIN
 admin.post("/gointoComplain", (req, res) => {
     const id = req.body.id;
+    console.log("post id is "+ id);
     User.hasMany(Complain, { foreignKey: 'user_id' })
     Complain.belongsTo(User, { foreignKey: 'user_id' }) //JOIN_USER_AND_COMPLAIN_TABLE
 
