@@ -66,7 +66,8 @@ supervisor.post("/viewjob", (req, res) => {
     Complain.findOne({
         where: {
             id: id
-        }
+        },
+        include: [User]
     }).then((data) => {
         res.json(data);
     })
