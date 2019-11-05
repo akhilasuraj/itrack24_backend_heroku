@@ -27,6 +27,10 @@ module.exports = db.sequelize.define(
 
         availability: {
             type: Sequelize.BOOLEAN
+        },
+
+        jobID :{
+            type: Sequelize.INTEGER
         }
 
 

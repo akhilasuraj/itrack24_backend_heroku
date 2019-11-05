@@ -22,5 +22,10 @@ module.exports = db.sequelize.define(
         },
         isSatisfied: {
             type: Sequelize.BOOLEAN
+        },
+
+        isWorkersAdded: {
+            type: Sequelize.BOOLEAN
         }
+
     });
