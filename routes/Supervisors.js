@@ -125,6 +125,7 @@ supervisor.post("/addworker", (req, res) => {
 //ACCEPT_BY_THE_SUPERVISOR
 supervisor.post("/addjob", (req, res) => {
     const supervisorID = req.body.supervisorID; //GET_THE_SUPERVISOR_ID 
+    const complainID = req.body.complainID;
     Job.count({
         where: {
             supervisorID: supervisorID,
@@ -139,7 +140,7 @@ supervisor.post("/addjob", (req, res) => {
 
         else {
             const jobData = {
-                complainID: req.body.complainID,
+                complainID: complainID,
                 supervisorID: supervisorID,
                 workStatus: 'in progress',
                 isWorkOn: true,
@@ -153,7 +154,7 @@ supervisor.post("/addjob", (req, res) => {
                             isAssigned: true
                         }, {
                             where: {
-                                id: req.body.complainID
+                                id: complainID
                             }
                         })
                         res.json(result);
@@ -201,15 +202,6 @@ supervisor.post("/getjoblist", (req, res) => {
   })
   
 });
-
-
-//GET_JOB_LIST
-supervisor.post("/", (req, res) => {
-    const supervisorID = req.body.supervisorID;
-
-})
-
-
 
 
 module.exports = supervisor;
