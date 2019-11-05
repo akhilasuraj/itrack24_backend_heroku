@@ -59,7 +59,8 @@ admin.post("/registerWorker", (req, res, err) => {
         Contact: req.body.Contact,
         JobType1: req.body.JobType1,
         JobType2: req.body.JobType2,
-        availability: true
+        availability: true,
+        jobID : 0
 
     }
 
@@ -88,10 +89,7 @@ admin.post("/registerWorker", (req, res, err) => {
 admin.get("/compcount", (req, res) => {
     Complain.count({
         where: {
-            [Sequelize.Op.or]: [
-                { isAccepted: false },
-                { isViwedByAdmin: false }
-            ]
+               isViwedByAdmin: false 
         }
     }).then((respond) => {
         res.json(respond);
@@ -101,10 +99,7 @@ admin.get("/compcount", (req, res) => {
 admin.get("/postcount", (req, res) => {
     Post.count({
         where: {
-            [Sequelize.Op.or]: [
-                { isAccepted: false },
-                { isViwedByAdmin: false }
-            ]
+                 isViwedByAdmin: false 
         }
     }).then((respond) => {
         res.json(respond);
@@ -117,10 +112,7 @@ admin.get("/viewcompNotification", (req, res) => {
     Complain.belongsTo(User, { foreignKey: 'user_id' }) //JOIN_USER_AND_COMPLAIN_TABLE
     Complain.findAll({
         where: {
-            [Sequelize.Op.or]: [
-                { isAccepted: false },
-                { isViwedByAdmin: false }
-            ]
+           isViwedByAdmin: false 
         },
         include: [User],
         order: [
@@ -135,10 +127,8 @@ admin.get("/viewcompNotification", (req, res) => {
 admin.get("/viewpostNotification", (req, res) => {
     Post.findAll({
         where: {
-            [Sequelize.Op.or]: [
-                { isAccepted: false },
-                { isViwedByAdmin: false }
-            ]
+                isViwedByAdmin: false 
+            
         }, order: [
             ['id', 'DESC']
         ]
@@ -176,6 +166,7 @@ admin.post("/gointoComplain", (req, res) => {
 //GO_INTO_POST
 admin.post("/gointoPost", (req, res) => {
     const id = req.body.id;
+    console.log("*/*/*/* " + id);
     Post.findOne({
         where: {
             id: id
@@ -189,7 +180,8 @@ admin.post("/gointoPost", (req, res) => {
                     id: id
                 }
             })
-        res.json(result);
+            res.json(result);
+            console.log(result);
     });
 });
 
@@ -207,7 +199,7 @@ admin.post("/acceptcomp", (req, res) => {
             }
         }).then((result) => {
             res.json(result); //USING_THIS_RESPOND_CAN_NOTIFIY_THE_USER
-            console.log("YOUR_COMPLAINE_HAS_BEEN_ACCEPTED");
+            console.log("YOUR_COMPLAIN_HAS_BEEN_ACCEPTED");
         })
 
 });
@@ -225,7 +217,7 @@ admin.post("/rejectcomp", (req, res) => {
             }
         }).then((result) => {
             res.json(result); //USING_THIS_RESPOND_CAN_NOTIFIY_THE_USER
-            console.log("YOUR_COMPLAINE_HAS_BEEN_REJECTED");
+            console.log("YOUR_COMPLAIN_HAS_BEEN_REJECTED");
         })
 
 });
