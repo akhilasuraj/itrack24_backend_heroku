@@ -184,19 +184,24 @@ supervisor.post("/givestatus", (req, res) => {
     });
 });
 
+
 //TAKE_ALL_DETAILS_ABOUT_WORKERS
 supervisor.post("/getjoblist", (req, res) => {
-    const id = req.body.id;
-    Complain.hasOne(Job, {foreignkey: 'complainID'})
-    Complain.findAll({
-        where: {
-            id: id
-        },
-        include:[Job]
-    }).then((data) => {
-        res.json(data);
-    })
+  const supervisorID = req.body.supervisorID;
+
+  Complain.hasOne(Job,{foreignkey:'complainID'})
+  Job.belongsTo(Complain,{foreignKey: 'complainID'})
+  Job.findAll({
+      where:{
+        supervisorID: supervisorID
+      },
+      include:[Complain]
+  }).then(result=>{
+     res.json(result);
+  })
+  
 });
+
 
 //GET_JOB_LIST
 supervisor.post("/", (req, res) => {
