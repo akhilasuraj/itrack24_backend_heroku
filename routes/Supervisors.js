@@ -117,12 +117,19 @@ supervisor.post("/addworker", (req, res) => {
                                 }
                             });
                     }).then(respond=>{
-                        res.json({
-                            message : 'SUCCESS'
-                        });
-                    })
+                        if(respond){
+                            res.json({
+                                message : 'SUCCESS'
+                            });
+                        }
+                        else{
+                            res.json({
+                                message : 'UNSUCCESS'
+                            })
+                        }
+                    });
             });
-        })
+        });
 });
 
 

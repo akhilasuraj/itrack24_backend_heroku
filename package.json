@@ -13,6 +13,7 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "cryptr": "^6.0.0",
     "ejs": "^2.6.1",
     "expiresin": "^1.0.10",
     "express": "^4.16.4",
