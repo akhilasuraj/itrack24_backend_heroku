@@ -136,7 +136,9 @@ supervisor.post("/addjob", (req, res) => {
         console.log(result);
         if (result >= 2) {                 //CHECK_THE_WORK_ON_COMPLAINS_EXCEED_THE_MAX(2)
             console.log("YOU_HAVE_RECEIVED_MAXIMUM_NUM_OF_COMPLAINS_ALREADY");
-            res.json(result);
+            res.json({
+                message :'YOU_HAVE_RECEIVED_MAXIMUM_NUM_OF_COMPLAINS_ALREADY'
+            });
         }
 
         else {
