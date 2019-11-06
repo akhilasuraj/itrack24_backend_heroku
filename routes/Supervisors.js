@@ -116,6 +116,10 @@ supervisor.post("/addworker", (req, res) => {
                                     id: jobID
                                 }
                             });
+                    }).then(respond=>{
+                        res.json({
+                            message : 'SUCCESS'
+                        });
                     })
             });
         })
