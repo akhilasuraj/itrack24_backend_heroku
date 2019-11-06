@@ -101,7 +101,8 @@ supervisor.post("/addworker", (req, res) => {
                 Employment.create(EmploymentData)
                     .then(() => {
                         Worker.update({
-                            availability: false
+                            availability: false,
+                            jobID : jobID
                         },
                             {
                                 where: {
@@ -203,5 +204,18 @@ supervisor.post("/getjoblist", (req, res) => {
   
 });
 
+
+
+//TAKE_ALL_DETAILS_ABOUT_WORKERS_RELATED_TO_CURRENT_JOB
+supervisor.post("/getallworkers",(req,res)=>{
+    const jobID = req.body.jobID; //jobid
+    Worker.findAll({
+        where:{
+            jobID : jobID
+        }
+    }).then(respond=>{
+        res.json(respond);
+    })
+});
 
 module.exports = supervisor;

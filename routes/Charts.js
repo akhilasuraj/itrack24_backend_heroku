@@ -8,7 +8,7 @@ charts.use(cors());
 charts.get("/category_count1",(req,res)=>{
   Complain.count({
       where:{
-          category:"Signal post"
+          category:"Solid waste-Public premises"
       }
   }).then((count1)=>{
       res.json(count1);
@@ -19,13 +19,38 @@ charts.get("/category_count1",(req,res)=>{
 charts.get("/category_count2",(req,res)=>{
     Complain.count({
         where:{
-            category:"Garbage disposal"
+            category:"Tree Cutting Debris-Public premises"
         }
     }).then((count2)=>{
         res.json(count2);
     });
   
+  });
+
+  
+charts.get("/category_count3",(req,res)=>{
+    Complain.count({
+        where:{
+            category:"Decaying-Waste Public"
+        }
+    }).then((count3)=>{
+        res.json(count3);
+    });
+  
   })
+
+  
+charts.get("/category_count4",(req,res)=>{
+    Complain.count({
+        where:{
+            category:"Drainage Blockage-Road"
+        }
+    }).then((count4)=>{
+        res.json(count4);
+    });
+  
+  })
+
 
 
 
