@@ -224,4 +224,31 @@ supervisor.post("/getallworkers",(req,res)=>{
     })
 });
 
+
+//
+supervisor.post("/workcomplete",(req,res)=>{
+    const id = req.body.id;
+   Job.update({
+       isWorkOn:false,
+       workStatus:"completed"
+   },{
+    where:{
+      id:id
+    }
+   }).then(respond=>{
+       Worker.update({
+           availability:true
+       },
+       {
+           where:{
+              jobID:id
+           }
+       })
+   }).then(data=>{
+       res.json({
+           message:"JOB_COMPLETED_SUCCESFULLY"
+       })
+   })
+});
+
 module.exports = supervisor;
