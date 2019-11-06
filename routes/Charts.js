@@ -4,7 +4,7 @@ const cors = require("cors");
 const Complain = require("../models/Complain");
 charts.use(cors());
 
-
+//BAR_CHART_DATA
 charts.get("/category_count1",(req,res)=>{
   Complain.count({
       where:{
@@ -14,7 +14,7 @@ charts.get("/category_count1",(req,res)=>{
       res.json(count1);
   });
 
-})
+});
 
 charts.get("/category_count2",(req,res)=>{
     Complain.count({
@@ -37,7 +37,7 @@ charts.get("/category_count3",(req,res)=>{
         res.json(count3);
     });
   
-  })
+  });
 
   
 charts.get("/category_count4",(req,res)=>{
@@ -49,7 +49,34 @@ charts.get("/category_count4",(req,res)=>{
         res.json(count4);
     });
   
-  })
+  });
+
+
+//PIE-CHART_DATA
+
+charts.get("/category_countA",(req,res)=>{
+    Complain.count({
+        where:{
+            category:"Mosquito breeding area-Public"
+        }
+    }).then((countA)=>{
+        res.json(countA);
+    });
+  
+  });
+
+  
+charts.get("/category_countB",(req,res)=>{
+    Complain.count({
+        where:{
+            category:"Mosquito breeding area-Private"
+        }
+    }).then((countB)=>{
+        res.json(countB);
+    });
+  
+  });
+
 
 
 

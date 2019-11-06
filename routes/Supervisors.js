@@ -88,7 +88,7 @@ supervisor.post("/addworker", (req, res) => {
             ],
             availability: true
         },
-        limit: 10
+        limit: amount
     })
         .then((result) => {
             result.rows.forEach(element => {
