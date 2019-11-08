@@ -88,7 +88,7 @@ supervisor.post("/addworker", (req, res) => {
             ],
             availability: true
         },
-        limit: 10
+        limit: amount
     })
         .then((result) => {
             result.rows.forEach(element => {
@@ -101,7 +101,8 @@ supervisor.post("/addworker", (req, res) => {
                 Employment.create(EmploymentData)
                     .then(() => {
                         Worker.update({
-                            availability: false
+                            availability: false,
+                            jobID : jobID
                         },
                             {
                                 where: {
@@ -115,9 +116,20 @@ supervisor.post("/addworker", (req, res) => {
                                     id: jobID
                                 }
                             });
-                    })
+                    }).then(respond=>{
+                        if(respond){
+                            res.json({
+                                message : 'SUCCESS'
+                            });
+                        }
+                        else{
+                            res.json({
+                                message : 'UNSUCCESS'
+                            })
+                        }
+                    });
             });
-        })
+        });
 });
 
 
@@ -125,6 +137,7 @@ supervisor.post("/addworker", (req, res) => {
 //ACCEPT_BY_THE_SUPERVISOR
 supervisor.post("/addjob", (req, res) => {
     const supervisorID = req.body.supervisorID; //GET_THE_SUPERVISOR_ID 
+    const complainID = req.body.complainID;
     Job.count({
         where: {
             supervisorID: supervisorID,
@@ -134,12 +147,14 @@ supervisor.post("/addjob", (req, res) => {
         console.log(result);
         if (result >= 2) {                 //CHECK_THE_WORK_ON_COMPLAINS_EXCEED_THE_MAX(2)
             console.log("YOU_HAVE_RECEIVED_MAXIMUM_NUM_OF_COMPLAINS_ALREADY");
-            res.json(result);
+            res.json({
+                message :'YOU_HAVE_RECEIVED_MAXIMUM_NUM_OF_COMPLAINS_ALREADY'
+            });
         }
 
         else {
             const jobData = {
-                complainID: req.body.complainID,
+                complainID: complainID,
                 supervisorID: supervisorID,
                 workStatus: 'in progress',
                 isWorkOn: true,
@@ -153,7 +168,7 @@ supervisor.post("/addjob", (req, res) => {
                             isAssigned: true
                         }, {
                             where: {
-                                id: req.body.complainID
+                                id: complainID
                             }
                         })
                         res.json(result);
@@ -203,13 +218,44 @@ supervisor.post("/getjoblist", (req, res) => {
 });
 
 
-//GET_JOB_LIST
-supervisor.post("/", (req, res) => {
-    const supervisorID = req.body.supervisorID;
 
-})
+//TAKE_ALL_DETAILS_ABOUT_WORKERS_RELATED_TO_CURRENT_JOB
+supervisor.post("/getallworkers",(req,res)=>{
+    const jobID = req.body.jobID; //jobid
+    Worker.findAll({
+        where:{
+            jobID : jobID
+        }
+    }).then(respond=>{
+        res.json(respond);
+    })
+});
 
 
-
+//
+supervisor.post("/workcomplete",(req,res)=>{
+    const id = req.body.id;
+   Job.update({
+       isWorkOn:false,
+       workStatus:"completed"
+   },{
+    where:{
+      id:id
+    }
+   }).then(respond=>{
+       Worker.update({
+           availability:true
+       },
+       {
+           where:{
+              jobID:id
+           }
+       })
+   }).then(data=>{
+       res.json({
+           message:"JOB_COMPLETED_SUCCESFULLY"
+       })
+   })
+});
 
 module.exports = supervisor;

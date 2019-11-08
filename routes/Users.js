@@ -8,7 +8,10 @@ const nodemailer = require("nodemailer");
 const User = require("../models/User")
 const ProImage = require("../models/ProfileImage")
 var multer = require("multer");
+const Cryptr = require('cryptr');
+const cryptr = new Cryptr('myTotalySecretKey');
 const uuidv1 = require('uuid/v1');
+
 users.use(cors())
 
 process.env.SECRET_KEY = 'secret'
@@ -355,6 +358,45 @@ users.post('/viewnavimage',(req,res)=>{
       console.log(result);
   });
 })
+
+//GET_USER_PASSWORD
+users.post('/getpassword',(req,res)=>{
+    const id = req.body.id;
+    User.findOne({
+        where:{
+            id:id
+        }
+    }).then(respond=>{
+      console.log(cryptr.decrypt(respond.password));
+    });
+});
+
+
+//CHENAGE_USER_PASSOWRD
+users.post('/changepassword',(req,res)=>{
+    const id = req.body.id;
+    const password = req.body.password;
+    const newpassword = req.body.newpassword;
+
+    User.findOne({
+        where:{
+            id:id
+        }
+    }).then(respond=>{
+        if(bcrypt.compareSync(password, respond.password)){
+             User.update({
+                 password:newpassword
+             },{
+                 where:{
+                     id:id
+                 }
+             })
+        }
+        else{
+            console.log("OLD_PASSWORD_NOT_MATCHED");
+        }
+    });
+});
 
 
 module.exports = users
