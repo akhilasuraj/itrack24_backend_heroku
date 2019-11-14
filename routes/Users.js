@@ -355,12 +355,23 @@ users.post('/viewnavimage', (req, res) => {
 //GET_USER_PASSWORD
 users.post('/getpassword', (req, res) => {
     const id = req.body.id;
+    const password = req.body.password;
+    console.log(password);
     User.findOne({
         where: {
             id: id
         }
     }).then(respond => {
-        console.log(cryptr.decrypt(respond.password));
+       if(bcrypt.compareSync(password, respond.password)){
+           res.json({
+               message1:"PASSWORD_MATCHED"
+           });
+       }
+       else{
+           res.json({
+               message2:"PASSWORD_MISSMATCHED"
+           })
+       }
     });
 });
 
@@ -368,26 +379,24 @@ users.post('/getpassword', (req, res) => {
 //CHENAGE_USER_PASSOWRD
 users.post('/changepassword', (req, res) => {
     const id = req.body.id;
-    const password = req.body.password;
     const newpassword = req.body.newpassword;
-
     User.findOne({
         where: {
             id: id
         }
     }).then(respond => {
-        if (bcrypt.compareSync(password, respond.password)) {
-            User.update({
-                password: newpassword
-            }, {
-                where: {
-                    id: id
-                }
-            })
-        }
-        else {
-            console.log("OLD_PASSWORD_NOT_MATCHED");
-        }
+     const hash = bcrypt.hashSync(newpassword, 10);
+       User.update({
+           password : hash
+       },{
+           where:{
+               id:id
+           }
+       }).then(result=>{
+           res.json({
+               message:"PASSWORD_HAS_BEEN_CHANGED"
+           });
+       });
     });
 });
 
