@@ -69,7 +69,6 @@ users.post('/register', (req, res) => {
         password: req.body.password,
         resetPasswordToken: req.body.resetPasswordToken,
         resetPasswordExpires: req.body.resetPasswordExpires,
-        user_token: '',
         isActivated: false,
         created: today
     }
@@ -80,51 +79,51 @@ users.post('/register', (req, res) => {
         }
 
     }).then((user) => {
-            console.log("user data ->>>>>>>>>>>>>>>")
-            if (!user) {
-                const hash = bcrypt.hashSync(userData.password, 10)
-                userData.password = hash;
-                User.create(userData)
-                    .then(user => {
-                        let token = jwt.sign(user.dataValues,
-                            process.env.SECRET_KEY,
-                            {
-                                expiresIn: '1h'
-                            });
-                        res.json(user); //REMOVE_THE_TOKEN_FROM_JSON
+        console.log("user data ->>>>>>>>>>>>>>>")
+        if (!user) {
+            const hash = bcrypt.hashSync(userData.password, 10)
+            userData.password = hash;
+            User.create(userData)
+                .then(user => {
+                    let token = jwt.sign(user.dataValues,
+                        process.env.SECRET_KEY,
+                        {
+                            expiresIn: '1h'
+                        });
+                    res.json(user); //REMOVE_THE_TOKEN_FROM_JSON
 
-                        async function main() {                           //SEND_EMAIL_TO_GIVEN_USER_EMAIL
-                            let transporter = nodemailer.createTransport({
-                                host: "smtp.gmail.com",
-                                auth: {
-                                    user: "dilina5860717@gmail.com", // generated ethereal user
-                                    pass: "dIlI1@@$$" // generated ethereal password
-                                }
-                            });
+                    async function main() {                           //SEND_EMAIL_TO_GIVEN_USER_EMAIL
+                        let transporter = nodemailer.createTransport({
+                            host: "smtp.gmail.com",
+                            auth: {
+                                user: "dilina5860717@gmail.com", // generated ethereal user
+                                pass: "dIlI1@@$$" // generated ethereal password
+                            }
+                        });
 
-                            // send mail with defined transport object
-                            let info = await transporter.sendMail({
-                                from: "dilina5860717@gmail.com", // sender address
-                                to: req.body.email, // list of receivers
-                                subject: "Active your itrack24✔", // Subject line
-                                html: "<b>To Active your itrack24 Account, click this link</b>" + "http://localhost:4200/verify?token=" + token + "&email=" + userData.email// html body
-                            });
+                        // send mail with defined transport object
+                        let info = await transporter.sendMail({
+                            from: "dilina5860717@gmail.com", // sender address
+                            to: req.body.email, // list of receivers
+                            subject: "Active your itrack24✔", // Subject line
+                            html: "<b>To Active your itrack24 Account, click this link</b>" + "http://localhost:4200/verify?token=" + token + "&email=" + userData.email// html body
+                        });
 
-                            console.log("Message sent: %s", info.messageId);
+                        console.log("Message sent: %s", info.messageId);
 
-                        }
+                    }
 
-                        main().catch(console.error);
+                    main().catch(console.error);
 
-                    })
-                    .catch(err => {
-                        res.send('error' + err)
-                    })
-            } else {
-              
-                console.log("user exist already");
-            }
-        })
+                })
+                .catch(err => {
+                    res.send('error' + err)
+                })
+        } else {
+
+            console.log("user exist already");
+        }
+    })
         .catch(err => {
             res.send('error' + err)
         })
@@ -171,15 +170,15 @@ users.post('/login', (req, res) => {
                         expiresIn: '1h'
                     })
                     User.update({
-                        user_token:token
-                      },{
-                        where:{
-                            email:req.body.email //UPDATE_TOKEN_SUCCESS_HERE
+                        user_token: token
+                    }, {
+                        where: {
+                            email: req.body.email //UPDATE_TOKEN_SUCCESS_HERE
                         }
-                      })
-                    res.json({ token: token, user_type:user.user_type ,firstName: user.first_name, lastName: user.last_name, userId: user.id })
+                    })
+                    res.json({ token: token, user_type: user.user_type, firstName: user.first_name, lastName: user.last_name, userId: user.id })
                 }
-                 else {
+                else {
                     res.json({ error: 'INVALID_PASSWORD' })
                 }
             } else {
@@ -192,23 +191,17 @@ users.post('/login', (req, res) => {
 })
 
 //PROFILE
-users.get('/profile', (req, res) => {
-    var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY)
+users.post('/userprofile', (req, res) => {
+    // var decoded = jwt.verify(req.headers['authorization'], process.env.SECRET_KEY)
+    const id = req.body.id
     User.findOne({
         where: {
-            id: decoded.id
+            id: 24
         }
+    }).then((data)=>{
+        res.json(data);
+        console.log(data);
     })
-        .then(user => {
-            if (user) {
-                res.json(user)
-            } else {
-                res.json({ error: "USER_DOES_NOT_EXIST" })
-            }
-        })
-        .catch(err => {
-            res.send('error :' + err)
-        })
 })
 
 
@@ -227,26 +220,26 @@ users.post('/editprofile', (req, res) => {
             id: req.body.id
         }
     })
-    .then(result=>{
-        User.findOne({
-            where: {
-                email: req.body.email,
-    
-            }
-        })
-            .then(user => {
-                let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
-                    expiresIn: 1440
+        .then(result => {
+            User.findOne({
+                where: {
+                    email: req.body.email,
+
+                }
+            })
+                .then(user => {
+                    let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
+                        expiresIn: 1440
+                    })
+                    res.json({ token: token })
                 })
-                res.json({ token: token })
-            })
-            .catch(err => {
-                res.send('error:' + err)
-            })
+                .catch(err => {
+                    res.send('error:' + err)
+                })
 
-    })
+        })
 
-   
+
 
 })
 
@@ -347,52 +340,52 @@ users.post('/reset', (req, res, err) => {
 
 })
 
-users.post('/viewnavimage',(req,res)=>{
-  const id = req.body.id;
-  ProImage.findOne({
-      where:{
-          U_id:id
-      }
-  }).then((result)=>{
-      res.json(result);
-      console.log(result);
-  });
+users.post('/viewnavimage', (req, res) => {
+    const id = req.body.id;
+    ProImage.findOne({
+        where: {
+            U_id: id
+        }
+    }).then((result) => {
+        res.json(result);
+        console.log(result);
+    });
 })
 
 //GET_USER_PASSWORD
-users.post('/getpassword',(req,res)=>{
+users.post('/getpassword', (req, res) => {
     const id = req.body.id;
     User.findOne({
-        where:{
-            id:id
+        where: {
+            id: id
         }
-    }).then(respond=>{
-      console.log(cryptr.decrypt(respond.password));
+    }).then(respond => {
+        console.log(cryptr.decrypt(respond.password));
     });
 });
 
 
 //CHENAGE_USER_PASSOWRD
-users.post('/changepassword',(req,res)=>{
+users.post('/changepassword', (req, res) => {
     const id = req.body.id;
     const password = req.body.password;
     const newpassword = req.body.newpassword;
 
     User.findOne({
-        where:{
-            id:id
+        where: {
+            id: id
         }
-    }).then(respond=>{
-        if(bcrypt.compareSync(password, respond.password)){
-             User.update({
-                 password:newpassword
-             },{
-                 where:{
-                     id:id
-                 }
-             })
+    }).then(respond => {
+        if (bcrypt.compareSync(password, respond.password)) {
+            User.update({
+                password: newpassword
+            }, {
+                where: {
+                    id: id
+                }
+            })
         }
-        else{
+        else {
             console.log("OLD_PASSWORD_NOT_MATCHED");
         }
     });
