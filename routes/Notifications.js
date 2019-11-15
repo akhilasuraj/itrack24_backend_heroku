@@ -15,7 +15,11 @@ notifications.post('/getPostCount', (req, res) => {
     Post.count({
         where: {
             UserID: UserID,
-            isViwedByUser: false
+            isViwedByUser: false,
+            [Sequelize.Op.or]: [
+                { isAccepted: true },
+                { isRejected: true }
+            ]
         }
     }).then((result) => {
         console.log(result);
@@ -30,7 +34,11 @@ notifications.post('/getCompCount', (req, res) => { //mekata twa work 'done' krp
     Complain.count({
         where: {
             user_id: user_id,
-            isViwedByUser: false
+            isViwedByUser: false,
+            [Sequelize.Op.or]: [
+                { isAccepted: true },
+                { isRejected: true }
+            ]
         }
     }).then((respond) => {
         console.log(respond);
@@ -38,18 +46,21 @@ notifications.post('/getCompCount', (req, res) => { //mekata twa work 'done' krp
     })
 });
 
-// //COMPLETED_COMPLAINS_NOTIFICATIONS *************
-// notifications.post('/getcompletedcomplains',(req,res)=>{
-//      Job.count({
-//         where: {
-//             [Sequelize.Op.or]: [
-//                 { isAccepted: true },
-//                 { isViwedByUser: false }
-//             ]
-//         }
-//      })
-// });
+//COMPLETED_COMPLAINS_COUNT 
+notifications.post('/getcompletedcomplains', (req, res) => {
+    const user_id = req.body.user_id;
+    Complain.count({
+        where: {
+            user_id: user_id,
+            isViwedCompletedByUser: false,
+            isCompleted: true
+        }
+    }).then(result => {
+        res.json(result);
+    })
+});
 
+//--------------------------------------------------------------------->
 
 //VIEW_POST_NOTIFICATIONS_FOR_USER
 notifications.post('/viewPostNotifications', (req, res) => {
@@ -57,7 +68,11 @@ notifications.post('/viewPostNotifications', (req, res) => {
     Post.findAll({
         where: {
             UserID: UserID,
-            isViwedByUser: false
+            isViwedByUser: false,
+            [Sequelize.Op.or]: [
+                { isAccepted: true },
+                { isRejected: true }
+            ]
         }, order: [
             ['id', 'DESC']
         ]
@@ -68,13 +83,17 @@ notifications.post('/viewPostNotifications', (req, res) => {
 
 
 
-//VIEW_COMPLAIN_NOTIFICATIONS_FOR_USER
+//VIEW_ACCEPTED_||_REJECTED_COMPLAIN_NOTIFICATIONS_FOR_USER
 notifications.post('/viewCompNotifications', (req, res) => {
     const user_id = req.body.user_id;
     Complain.findAll({
         where: {
             user_id: user_id,
-            isViwedByUser: false
+            isViwedByUser: false,
+            [Sequelize.Op.or]: [
+                { isAccepted: true },
+                { isRejected: true }
+            ]
         },
         order: [
             ['id', 'DESC']
@@ -84,7 +103,26 @@ notifications.post('/viewCompNotifications', (req, res) => {
     });
 });
 
-//GO_INTO_POST
+//VIEW_COMPLETED_COMPLAINS_NOTIFICATIONS
+notifications.post('/viewCompletedCompNotifications', (req, res) => {
+    const user_id = req.body.user_id;
+    Complain.findAll({
+        where: {
+            user_id: user_id,
+            isViwedCompletedByUser: false,
+            isCompleted: true,
+
+        }, order: [
+            ['id', 'DESC']
+        ]
+    }).then((respond) => {
+        res.json(respond);
+    });
+});
+
+//--------------------------------------------------------------------->
+
+//GO_INTO_ACCEPTED_||_REJECTED_COMPLAINS
 notifications.post("/complainMore", (req, res) => {
     const id = req.body.id;
     Complain.findOne({
@@ -94,6 +132,26 @@ notifications.post("/complainMore", (req, res) => {
     }).then((result) => {
         Complain.update({
             isViwedByUser: true
+        },
+            {
+                where: {
+                    id: id
+                }
+            })
+        res.json(result);
+    });
+});
+
+//GO_INTO_COMPLETED_COMPLAINS
+notifications.post("/completedcomplainMore", (req, res) => {
+    const id = req.body.id;
+    Complain.findOne({
+        where: {
+            id: id
+        }
+    }).then((result) => {
+        Complain.update({
+            isViwedCompletedByUser: true
         },
             {
                 where: {

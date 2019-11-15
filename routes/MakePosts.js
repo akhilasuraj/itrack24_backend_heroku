@@ -97,7 +97,9 @@ posts.post('/addpost',upload.single('postImg'), (req, res, err) => {
         console.log(PostDetails);
         Post.create(PostDetails)
             .then((post) => {
-                res.send(post);
+                res.send({
+                    message: "Your Post submitted succesfully. We will notify you when admin responded within it."
+                });
                 console.log('POST_CRETED_SUCCESFULLY');
 
             }).catch((err) => {

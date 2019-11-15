@@ -19,7 +19,7 @@ PostDetails = {
     
 }
 
-//GET_ALL_POSTS
+//GOTO_NEWSFEED
 getposts.get('/viewposts',(req,res,err)=>{
     Post.findAll({
         where:{
@@ -61,7 +61,9 @@ getposts.post('/deletepost',(req,res)=>{
         }
     })
     .then((result)=>{
-        res.json(result);
+       res.send({
+           message: "Post has been deleted"
+       })
         console.log("POST_DELETED");
     })
 })

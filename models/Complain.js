@@ -19,18 +19,6 @@ module.exports = db.sequelize.define(
       complainImg: {
          type: Sequelize.STRING
       },
-      address1: {
-         type: Sequelize.INTEGER
-      },
-
-      address2: {
-         type: Sequelize.STRING
-      },
-
-      district: {
-         type: Sequelize.STRING
-      },
-
       date: {
          type: Sequelize.STRING
       },
@@ -46,11 +34,15 @@ module.exports = db.sequelize.define(
          type: Sequelize.FLOAT
       },
 
-      sectionName:{
+      sectionName: {
          type: Sequelize.STRING
       },
 
       isViwedByUser: {
+         type: Sequelize.BOOLEAN
+      },
+
+      isViwedCompletedByUser: {
          type: Sequelize.BOOLEAN
       },
 
@@ -61,12 +53,16 @@ module.exports = db.sequelize.define(
       isAccepted: {
          type: Sequelize.BOOLEAN
       },
- 
+
       isRejected: {
          type: Sequelize.BOOLEAN
       },
-      
+
       isAssigned: {
+         type: Sequelize.BOOLEAN
+      },
+
+      isCompleted: {
          type: Sequelize.BOOLEAN
       }
    },

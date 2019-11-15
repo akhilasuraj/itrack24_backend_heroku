@@ -21,10 +21,12 @@ complainData = {
    longitude: 0,
    latitude: 0,
    isViwedByUser: '',
+   isViwedCompletedByUser: '',
    isViwedByAdmin: '',
    isAccepted: '',
    isRejected: '',
-   isAssigned: ''
+   isAssigned: '',
+   isCompleted:''
 }
 
 
@@ -77,27 +79,26 @@ complains.post('/complain', upload.single('compImg'), (req, res) => {
             category: req.body.category,
             description: req.body.description,
             complainImg: req.file.filename,
-            address1: req.body.address1,
-            address2: req.body.address2,
-            district: req.body.district,
             date: req.body.date,
             time: req.body.time,
             longitude: req.body.longitude,
             latitude: req.body.latitude,
             sectionName: sectionName,
             isViwedByUser: false,
+            isViwedCompletedByUser: false,
             isViwedByAdmin: false,
             isAccepted: false,
             isRejected: false,
-            isAssigned: false
+            isAssigned: false,
+            isCompleted: false
          }
-
-         console.log(complainData)
-
          Complain.create(complainData)
             .then(comp => {
-               res.send(comp)
-            })
+               res.send({
+                  message : "Your complaint has been succesfully reported. We will notify you when admin responded within it."
+               })
+               console.log(complainData);
+            });
       }
       else{
          console.log("NO_SECTION_HAS_BEEN_MATCHED");

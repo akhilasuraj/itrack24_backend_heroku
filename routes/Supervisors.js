@@ -232,9 +232,10 @@ supervisor.post("/getallworkers",(req,res)=>{
 });
 
 
-//
+//COMPLETED_WORK------------------------------------------->changed
 supervisor.post("/workcomplete",(req,res)=>{
     const id = req.body.id;
+    const complainID = req.body.complainID;
    Job.update({
        isWorkOn:false,
        workStatus:"completed"
@@ -252,10 +253,17 @@ supervisor.post("/workcomplete",(req,res)=>{
            }
        })
    }).then(data=>{
-       res.json({
-           message:"JOB_COMPLETED_SUCCESFULLY"
-       })
-   })
-});
+        Complain.update({
+            isCompleted : true
+        },{
+            where:{
+               id : complainID
+            }
+        }).then(respond=>{
+            console.log("JOB_COMPLETED_SUCCESFULLY");
+            res.send(respond)
+        });
+       });
+   });
 
 module.exports = supervisor;
