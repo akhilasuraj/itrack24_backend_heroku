@@ -35,12 +35,15 @@ getposts.get('/viewposts',(req,res,err)=>{
     });
 });
 
-//GET_MY_POSTS
-getposts.post('/viewmyposts', (req,res)=>{
-    console.log(req.body.uid);
+//--------------------------GET_MY_POSTS----------------------
+
+//ACCEPTED_POSTS
+getposts.post('/acceptedposts', (req,res)=>{
+    console.log(req.body.UserID);
     Post.findAll({
         where:{
-          UserID:req.body.uid
+          UserID:req.body.UserID,
+          isAccepted: true
         },
         order: [
             ['id','DESC'],
@@ -49,10 +52,27 @@ getposts.post('/viewmyposts', (req,res)=>{
     .then((result)=>{
         res.json(result);
         console.log(result);
-    })
-})
+    });
+});
 
-//DELETE_POST
+//EDITABLE_POSTS
+getposts.post('/editableposts',(req,res)=>{
+    const UserID = req.body.UserID;
+    Post.findAll({
+        where: {
+           UserID: UserID,
+           isAccepted: false,
+           isRejected: false
+        }, order: [
+           ['id', 'DESC'], //GET_AS_DESCENDING_ORDER
+        ]
+     }).then(result => {
+        res.json(result);
+        console.log("HERE_EDITABLE_COMPLAINS");
+     })
+});
+
+//DELETE_WHATEVER_POSTS(ACCEPTED/ NOT_ACCEPTED)
 getposts.post('/deletepost',(req,res)=>{
     console.log(req.body.postid);
     Post.destroy({
@@ -65,33 +85,22 @@ getposts.post('/deletepost',(req,res)=>{
            message: "Post has been deleted"
        })
         console.log("POST_DELETED");
-    })
-})
-
-//GET_SELECTED_POST
-getposts.post('/getselectedpost',(req,res)=>{
-    console.log(req.body.userid);
-    Post.findOne({
-        where:{
-            id:req.body.id
-        }
-    }).then((result)=>{
-        res.json(result);
-        console.log("THIS_IS_SELECTED_NOTIFICATION_POST")
-        if(result){
-        Post.update({
-            isViwedByUser : true
-        },{
-            where:{
-                id:req.body.id
-            }
-        });
-    }
-    else{
-        console.log("error");
-    }
     });
 });
+
+
+//-------------itrack24 MobileClient----------------------//
+
+//GET_ALL_POSTS_OF_EVERYONE
+getposts.post("/getallposts",(req,res)=>{
+    Post.findAll()
+    .then(respond=>{
+        res.json(respond);
+        console.log("HERE_EVERYONE'S_POSTS");
+    })
+});
+
+
 
 
 

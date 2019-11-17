@@ -20,8 +20,8 @@ module.exports = db.sequelize.define(
         isWorkOn: {
             type: Sequelize.BOOLEAN
         },
-        isSatisfied: {
-            type: Sequelize.BOOLEAN
+        rating: {
+            type: Sequelize.STRING
         },
 
         isWorkersAdded: {

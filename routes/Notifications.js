@@ -73,7 +73,8 @@ notifications.post('/viewPostNotifications', (req, res) => {
                 { isAccepted: true },
                 { isRejected: true }
             ]
-        }, order: [
+        },
+        order: [
             ['id', 'DESC']
         ]
     }).then((respond) => {
@@ -112,7 +113,8 @@ notifications.post('/viewCompletedCompNotifications', (req, res) => {
             isViwedCompletedByUser: false,
             isCompleted: true,
 
-        }, order: [
+        },
+        order: [
             ['id', 'DESC']
         ]
     }).then((respond) => {
@@ -132,12 +134,11 @@ notifications.post("/complainMore", (req, res) => {
     }).then((result) => {
         Complain.update({
             isViwedByUser: true
-        },
-            {
-                where: {
-                    id: id
-                }
-            })
+        }, {
+            where: {
+                id: id
+            }
+        })
         res.json(result);
     });
 });
@@ -145,20 +146,22 @@ notifications.post("/complainMore", (req, res) => {
 //GO_INTO_COMPLETED_COMPLAINS
 notifications.post("/completedcomplainMore", (req, res) => {
     const id = req.body.id;
-    Complain.findOne({
+    const rate = req.body.rate;
+
+    Complain.update({
+        isViwedCompletedByUser: true
+    }, {
         where: {
             id: id
         }
-    }).then((result) => {
-        Complain.update({
-            isViwedCompletedByUser: true
-        },
-            {
-                where: {
-                    id: id
-                }
-            })
-        res.json(result);
+    }).then(result => {
+        Job.update({
+            Rating: rate
+        }, {
+            where: {
+                complainID: id
+            }
+        })
     });
 });
 
@@ -172,12 +175,11 @@ notifications.post("/postMore", (req, res) => {
     }).then((result) => {
         Post.update({
             isViwedByUser: true
-        },
-            {
-                where: {
-                    id: id
-                }
-            })
+        }, {
+            where: {
+                id: id
+            }
+        })
         res.json(result);
     });
 });

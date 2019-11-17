@@ -26,7 +26,7 @@ complainData = {
    isAccepted: '',
    isRejected: '',
    isAssigned: '',
-   isCompleted:''
+   isCompleted: ''
 }
 
 
@@ -95,61 +95,86 @@ complains.post('/complain', upload.single('compImg'), (req, res) => {
          Complain.create(complainData)
             .then(comp => {
                res.send({
-                  message : "Your complaint has been succesfully reported. We will notify you when admin responded within it."
+                  message: "Your complaint has been succesfully reported. We will notify you when admin responded within it."
                })
                console.log(complainData);
             });
       }
-      else{
+      else {
          console.log("NO_SECTION_HAS_BEEN_MATCHED");
       }
-   })
+   });
+});
 
 
+//-------------------MY COMPLAINS-----------------
 
-})
-
-
-//GET_MY_COMPLAINS
-complains.post('/mycomplains', (req, res) => {
+//ACCCEPTABLE_COMPLAINS
+complains.post('/acceptedcomplains', (req, res) => {
    console.log(req.body.user_id);
    Complain.findAll({
       where: {
          user_id: req.body.user_id,
+         isAccepted: true
       },
       order: [
          ['id', 'DESC'], //GET_AS_DESCENDING_ORDER
       ]
+   }).then((respond) => {
+      res.json(respond)
    })
-      .then((respond) => {
-         res.json(respond)
-      })
 });
 
-//GET_SELECTED_COMPLAIN
-complains.post('/getselectedcomplain', (req, res) => {
-   console.log(req.body.userid);
-   Complain.findOne({
+//EDITABLE_COMPLAINS
+complains.post("/editablecomplains", (req, res) => {
+   const user_id = req.body.user_id;
+   Complain.findAll({
       where: {
-         id: req.body.id
-      }
-   }).then((result) => {
+         user_id: user_id,
+         isAccepted: false,
+         isRejected: false
+      }, order: [
+         ['id', 'DESC'], //GET_AS_DESCENDING_ORDER
+      ]
+   }).then(result => {
       res.json(result);
-      console.log("THIS_IS_SELECTED_NOTIFICATION_COMPLAINS")
-      if (result) {
-         Complain.update({
-            isViwedByUser: true
-         }, {
-            where: {
-               id: req.body.id
-            }
-         });
-      }
-      else {
-         console.log("error");
-      }
-   });
+      console.log("HERE_EDITABLE_COMPLAINS");
+   })
 });
+
+//DELETE_EDITABLE_COMPLAINS
+complains.post("/deletecomplains", (req, res) => {
+   const id = req.body.id;
+   Complain.destroy({
+      where:{
+         id : id
+      }
+   }).then(result => {
+      res.json({
+         message : "Your Complain has been deleted."
+      })
+      console.log("COMPLAIN_DELETED");
+   })
+});
+
+
+//-------------itrack24 MobileClient----------------------//
+
+
+//GET_MY_ALL_COMPLAINS
+complains.post("/getallcomplains",(req,res)=>{
+   const user_id = req.body.user_id;
+   Complain.findAll({
+      where : {
+         user_id : user_id
+      }
+   }).then(result=>{
+      res.json(result);
+      console.log("HERE_YOUR_ALL_COMPLAINS");
+   }); 
+});
+
+
 
 
 module.exports = complains
