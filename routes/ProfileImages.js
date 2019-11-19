@@ -38,7 +38,7 @@ var upload = multer({ storage: storage,
 });
 
 proimage.post('/getUserID',(req,res)=>{
-    proimg_data.u_id = req.body.user_ID;
+    proimg_data.u_id = req.body.id;
     
 })
 
@@ -87,7 +87,7 @@ proimage.post('/profilepic',upload.single('prophoto'), async function(req,res){
 proimage.post('/viewproimage',(req,res)=>{
     ProImg.findOne({
         where :{
-            u_id: req.body.user_ID
+            u_id: req.body.id
         }
   }).then((result)=>{
       res.json(result);

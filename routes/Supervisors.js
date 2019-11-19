@@ -27,12 +27,10 @@ supervisor.post("/login", (req, res, err) => {
                     expiresIn: 3600
                 });
                 res.json({ contactno: result.contactno, firstname: result.firstname, lastname: result.lastname, email: result.email, token: token, supervisorID: result.id, jobcategory1: result.jobcategory1, jobcategory2: result.jobcategory2 }); //SEND_JOBCATEGORIES
-            }
-            else {
+            } else {
                 console.log("PASSWORD_INCORRECT");
             }
-        }
-        else {
+        } else {
             console.log("USER_NOT_EXIST");
         }
     });
@@ -81,15 +79,15 @@ supervisor.post("/addworker", (req, res) => {
     const amount = req.body.amount;
     const jobID = req.body.jobID;
     Worker.findAndCountAll({
-        where: {
-            [Sequelize.Op.or]: [
-                { JobType1: JobType },
-                { JobType2: JobType }
-            ],
-            availability: true
-        },
-        limit: amount
-    })
+            where: {
+                [Sequelize.Op.or]: [
+                    { JobType1: JobType },
+                    { JobType2: JobType }
+                ],
+                availability: true
+            },
+            limit: amount
+        })
         .then((result) => {
             result.rows.forEach(element => {
                 console.log(element.id);
@@ -101,10 +99,9 @@ supervisor.post("/addworker", (req, res) => {
                 Employment.create(EmploymentData)
                     .then(() => {
                         Worker.update({
-                            availability: false,
-                            jobID : jobID
-                        },
-                            {
+                                availability: false,
+                                jobID: jobID
+                            }, {
                                 where: {
                                     id: element.id
                                 }
@@ -116,15 +113,14 @@ supervisor.post("/addworker", (req, res) => {
                                     id: jobID
                                 }
                             });
-                    }).then(respond=>{
-                        if(respond){
+                    }).then(respond => {
+                        if (respond) {
                             res.json({
-                                message : 'SUCCESS'
+                                message: 'SUCCESS'
                             });
-                        }
-                        else{
+                        } else {
                             res.json({
-                                message : 'UNSUCCESS'
+                                message: 'UNSUCCESS'
                             })
                         }
                     });
@@ -145,20 +141,18 @@ supervisor.post("/addjob", (req, res) => {
         }
     }).then((result) => {
         console.log(result);
-        if (result >= 2) {                 //CHECK_THE_WORK_ON_COMPLAINS_EXCEED_THE_MAX(2)
+        if (result >= 2) { //CHECK_THE_WORK_ON_COMPLAINS_EXCEED_THE_MAX(2)
             console.log("YOU_HAVE_RECEIVED_MAXIMUM_NUM_OF_COMPLAINS_ALREADY");
             res.json({
-                message :'YOU_HAVE_RECEIVED_MAXIMUM_NUM_OF_COMPLAINS_ALREADY'
+                message: 'YOU_HAVE_RECEIVED_MAXIMUM_NUM_OF_COMPLAINS_ALREADY'
             });
-        }
-
-        else {
+        } else {
             const jobData = {
                 complainID: complainID,
                 supervisorID: supervisorID,
                 workStatus: 'in progress',
                 isWorkOn: true,
-                isSatisfied: false,
+                rating: '0',
                 isWorkerAdded: false
             }
             Job.create(jobData)
@@ -173,8 +167,7 @@ supervisor.post("/addjob", (req, res) => {
                         })
                         res.json(result);
                         console.log("NEW_JOB_CREATED_SUCCESFULLY");
-                    }
-                    else {
+                    } else {
                         console.log("JOB_CREATION_FAILED");
                     }
                 });
@@ -202,60 +195,67 @@ supervisor.post("/givestatus", (req, res) => {
 
 //TAKE_ALL_DETAILS_ABOUT_WORKERS
 supervisor.post("/getjoblist", (req, res) => {
-  const supervisorID = req.body.supervisorID;
+    const supervisorID = req.body.supervisorID;
 
-  Complain.hasOne(Job,{foreignkey:'complainID'})
-  Job.belongsTo(Complain,{foreignKey: 'complainID'})
-  Job.findAll({
-      where:{
-        supervisorID: supervisorID
-      },
-      include:[Complain]
-  }).then(result=>{
-     res.json(result);
-  })
-  
+    Complain.hasOne(Job, { foreignkey: 'complainID' })
+    Job.belongsTo(Complain, { foreignKey: 'complainID' })
+    Job.findAll({
+        where: {
+            supervisorID: supervisorID
+        },
+        include: [Complain]
+    }).then(result => {
+        res.json(result);
+    })
+
 });
 
 
 
 //TAKE_ALL_DETAILS_ABOUT_WORKERS_RELATED_TO_CURRENT_JOB
-supervisor.post("/getallworkers",(req,res)=>{
+supervisor.post("/getallworkers", (req, res) => {
     const jobID = req.body.jobID; //jobid
     Worker.findAll({
-        where:{
-            jobID : jobID
+        where: {
+            jobID: jobID
         }
-    }).then(respond=>{
+    }).then(respond => {
         res.json(respond);
     })
 });
 
 
-//
-supervisor.post("/workcomplete",(req,res)=>{
+//COMPLETED_WORK------------------------------------------->changed
+supervisor.post("/workcomplete", (req, res) => {
     const id = req.body.id;
-   Job.update({
-       isWorkOn:false,
-       workStatus:"completed"
-   },{
-    where:{
-      id:id
-    }
-   }).then(respond=>{
-       Worker.update({
-           availability:true
-       },
-       {
-           where:{
-              jobID:id
-           }
-       })
-   }).then(data=>{
-       res.json({
-           message:"JOB_COMPLETED_SUCCESFULLY"
-       })
-   })
+    const complainID = req.body.complainID;
+    Job.update({
+        isWorkOn: false,
+        workStatus: "completed"
+    }, {
+        where: {
+            id: id
+        }
+    }).then(respond => {
+        Worker.update({
+            availability: true
+        }, {
+            where: {
+                jobID: id
+            }
+        })
+    }).then(data => {
+        Complain.update({
+            isCompleted: true
+        }, {
+            where: {
+                id: complainID
+            }
+        }).then(respond => {
+            console.log("JOB_COMPLETED_SUCCESFULLY");
+            res.send(respond)
+        });
+    });
 });
 
 module.exports = supervisor;
