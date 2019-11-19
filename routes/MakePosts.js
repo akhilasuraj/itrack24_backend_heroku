@@ -86,6 +86,8 @@ posts.post('/addpost',upload.single('postImg'), (req, res, err) => {
         PostContent: req.body.PostContent,
         PostTitle: req.body.PostTitle,
         PostImg:req.file.filename,
+        PostLike:0,
+        PostDisLike:0,
         PostDate: getDate(),            
         PostTime: getTime(),
         isViwedByUser:false,

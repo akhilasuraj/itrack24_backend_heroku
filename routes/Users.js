@@ -83,7 +83,8 @@ users.post('/register', (req, res) => {
             userData.password = hash;
             User.create(userData)
                 .then(result => {
-                    console.log(user);
+                    console.log(userData);
+                    console.log("user created");
                     async function main() {  //SEND_EMAIL_TO_GIVEN_USER_EMAIL
                         let transporter = nodemailer.createTransport({
                             host: "smtp.gmail.com",
@@ -103,7 +104,7 @@ users.post('/register', (req, res) => {
 
                         console.log("Message sent: %s", info.messageId);
                         res.send({
-                            message1: "Verification link has been sent to your email " + req.body.email + ". Check and activate your account"
+                            message: "Verification link has been sent to your email"
                         });
                     }
                     main().catch(console.error);
@@ -113,7 +114,7 @@ users.post('/register', (req, res) => {
                 })
         } else {
             res.send({
-                message2: req.body.email + " is registered already.Try another email"
+                message: "this email registered already.Try another email"
             });
             console.log("user exist already");
         }
@@ -171,24 +172,24 @@ users.post('/login', (req, res) => {
                 })
                 res.json({
                     token: token, user_type: user.user_type, firstName: user.first_name, lastName: user.last_name, userId: user.id
-                    , message5: "Logged succesfully"
+                    , message: "Logged succesfully"
                 })
             }
             else {
                 res.send({
-                    message4: "Incorrect password"
+                    message: "Incorrect password"
                 })
             }
         } else {
             res.send({
-                message3: "Incorrect email"
+                message: "Incorrect email"
             });
         }
     })
         .catch(err => {
             res.send('error:' + err)
-        })
-})
+        });
+});
 
 //PROFILE
 users.post('/userprofile', (req, res) => {
@@ -196,13 +197,13 @@ users.post('/userprofile', (req, res) => {
     const id = req.body.id
     User.findOne({
         where: {
-            id: 24
+            id: id
         }
     }).then((data) => {
         res.json(data);
         console.log(data);
-    })
-})
+    });
+});
 
 
 

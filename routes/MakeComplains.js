@@ -111,7 +111,6 @@ complains.post('/complain', upload.single('compImg'), (req, res) => {
 
 //ACCCEPTABLE_COMPLAINS
 complains.post('/acceptedcomplains', (req, res) => {
-   console.log(req.body.user_id);
    Complain.findAll({
       where: {
          user_id: req.body.user_id,
@@ -122,6 +121,7 @@ complains.post('/acceptedcomplains', (req, res) => {
       ]
    }).then((respond) => {
       res.json(respond)
+      console.log("HERE_ACCPTED_COMPLAINS");
    })
 });
 
@@ -156,6 +156,7 @@ complains.post("/deletecomplains", (req, res) => {
       console.log("COMPLAIN_DELETED");
    })
 });
+
 
 
 //-------------itrack24 MobileClient----------------------//

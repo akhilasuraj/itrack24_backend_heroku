@@ -8,7 +8,6 @@ notifications.use(cors());
 const Sequelize = require('sequelize');
 
 
-
 //ADMIN_REJECTED_||_ACCEPTED_POST_COUNT
 notifications.post('/getPostCount', (req, res) => {
     const UserID = req.body.UserID;
@@ -83,7 +82,6 @@ notifications.post('/viewPostNotifications', (req, res) => {
 });
 
 
-
 //VIEW_ACCEPTED_||_REJECTED_COMPLAIN_NOTIFICATIONS_FOR_USER
 notifications.post('/viewCompNotifications', (req, res) => {
     const user_id = req.body.user_id;
@@ -100,6 +98,7 @@ notifications.post('/viewCompNotifications', (req, res) => {
             ['id', 'DESC']
         ]
     }).then((respond) => {
+        console.log(respond);
         res.json(respond);
     });
 });
@@ -183,6 +182,8 @@ notifications.post("/postMore", (req, res) => {
         res.json(result);
     });
 });
+
+
 
 
 module.exports = notifications
