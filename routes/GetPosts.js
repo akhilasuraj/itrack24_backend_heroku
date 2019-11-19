@@ -141,10 +141,11 @@ getposts.post('/editableposts',(req,res)=>{
 
 //DELETE_WHATEVER_POSTS(ACCEPTED/ NOT_ACCEPTED)
 getposts.post('/deletepost',(req,res)=>{
-    console.log(req.body.postid);
+    console.log(req.body.id);
+    const id = req.body.id;
     Post.destroy({
         where:{
-          id:req.body.id
+          id:id
         }
     })
     .then((result)=>{

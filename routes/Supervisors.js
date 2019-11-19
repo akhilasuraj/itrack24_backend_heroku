@@ -53,6 +53,7 @@ supervisor.post("/getjob", (req, res) => {
         }
     }).then((result) => {
         res.json(result);
+        // console.log(result);
         console.log("SUITABLE_COMPLAINS_FOR_A_SUPERVISOR");
     })
 });
@@ -91,7 +92,6 @@ supervisor.post("/addworker", (req, res) => {
         .then((result) => {
             result.rows.forEach(element => {
                 console.log(element.id);
-
                 EmploymentData = {
                     workerID: element.id,
                     jobID: jobID
@@ -112,17 +112,11 @@ supervisor.post("/addworker", (req, res) => {
                                 where: {
                                     id: jobID
                                 }
-                            });
-                    }).then(respond => {
-                        if (respond) {
-                            res.json({
-                                message: 'SUCCESS'
-                            });
-                        } else {
-                            res.json({
-                                message: 'UNSUCCESS'
-                            })
-                        }
+                            }).then((respond) => {
+                                res.json({
+                                    message : "Success"
+                                });                         
+                    });
                     });
             });
         });

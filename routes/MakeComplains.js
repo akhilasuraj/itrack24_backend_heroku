@@ -4,6 +4,7 @@ const multer = require('multer');
 const cors = require("cors");
 const Complain = require("../models/Complain");
 const Section = require("../models/Section");
+const Job = require("../models/job");
 const Sequelize = require('sequelize');
 complains.use(cors());
 
@@ -157,10 +158,34 @@ complains.post("/deletecomplains", (req, res) => {
    })
 });
 
+//RATE_JOB
+complains.post("/ratejob",(req,res)=>{
+   const id = req.body.id;
+   const currentRate = req.body.rate;
+   console.log(id);
+   console.log(currentRate);
+
+   Job.update({
+     rating : currentRate
+   },{
+      where:{
+         complainID :id
+      }
+   }).then(result=>{
+      Complain.update({
+         isViwedCompletedByUser : true
+      },{
+         where:{
+            id:id
+         }
+      }).then(respond=>{
+         console.log("RATED_SUCCESFULLY");
+      });
+   });
+});
 
 
-//-------------itrack24 MobileClient----------------------//
-
+//-------------itrack24 MobileClient----------------------/
 
 //GET_MY_ALL_COMPLAINS
 complains.post("/getallcomplains",(req,res)=>{
@@ -171,7 +196,7 @@ complains.post("/getallcomplains",(req,res)=>{
       }
    }).then(result=>{
       res.json(result);
-      console.log("HERE_YOUR_ALL_COMPLAINS");
+      // console.log("HERE_YOUR_ALL_COMPLAINS");
    }); 
 });
 
