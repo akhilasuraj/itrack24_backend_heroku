@@ -123,7 +123,9 @@ admin.get("/viewcompNotification", (req, res) => {
     Complain.belongsTo(User, { foreignKey: 'user_id' }) //JOIN_USER_AND_COMPLAIN_TABLE
     Complain.findAll({
         where: {
-           isViwedByAdmin: false 
+           isViwedByAdmin: false,
+           isAccepted : false,
+           isRejected : false 
         },
         include: [User],
         order: [
@@ -138,7 +140,9 @@ admin.get("/viewcompNotification", (req, res) => {
 admin.get("/viewpostNotification", (req, res) => {
     Post.findAll({
         where: {
-                isViwedByAdmin: false 
+                isViwedByAdmin: false,
+                isAccepted: false,
+                isRejected: false
             
         }, order: [
             ['id', 'DESC']
@@ -219,8 +223,11 @@ admin.post("/acceptcomp", (req, res) => {
 //REJECT_USER_COMPLAIN
 admin.post("/rejectcomp", (req, res) => {
     const id = req.body.id;
+    const reason = req.body.reason;
+    console.log("this is the rejected reason " + reason);
     Complain.update({
-        isRejected: true
+        isRejected: true,
+        reason : reason
     },
         {
             where: {

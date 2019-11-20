@@ -57,6 +57,10 @@ module.exports = db.sequelize.define(
       isRejected: {
          type: Sequelize.BOOLEAN
       },
+      
+      reason:{
+         type: Sequelize.STRING
+      },
 
       isAssigned: {
          type: Sequelize.BOOLEAN

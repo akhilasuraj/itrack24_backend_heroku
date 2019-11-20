@@ -6,6 +6,7 @@ const supervisor = express.Router();
 supervisor.use(cors());
 const Complain = require("../models/Complain");
 const Supervisor = require("../models/Supervisor");
+const User = require("../models/User");
 const Job = require("../models/job");
 const Worker = require("../models/Worker");
 const Employment = require("../models/Employment");
@@ -105,7 +106,7 @@ supervisor.post("/addworker", (req, res) => {
             ],
             availability: true
         },
-        limit: 10
+        limit: amount
     })
         .then((result) => {
             result.rows.forEach(element => {
@@ -216,6 +217,7 @@ supervisor.post("/getjoblist", (req, res) => {
         include: [Complain]
     }).then(result => {
         res.json(result);
+        
     })
 
 });
@@ -238,6 +240,7 @@ supervisor.post("/getallworkers", (req, res) => {
 //COMPLETED_WORK------------------------------------------->changed
 supervisor.post("/workcomplete", (req, res) => {
     const id = req.body.id;
+    console.log(id);
     const complainID = req.body.complainID;
     Job.update({
         isWorkOn: false,
@@ -267,5 +270,22 @@ supervisor.post("/workcomplete", (req, res) => {
         });
     });
 });
+
+//GET_COMPLAINED_USER_DETAIL
+supervisor.post("/getuserdetails",(req,res)=>{
+    const id = req.body.id;
+    User.hasMany(Complain, { foreignKey: 'user_id' })
+    Complain.belongsTo(User, { foreignKey: 'user_id' }) //JOIN_USER_AND_COMPLAIN_TABLE
+    
+    Complain.findOne({
+        where: {
+            id: id
+        },
+        include:[User]
+    }).then(result=>{
+        res.json(result);
+        console.log("HERE THE DETAILS OF THE COMPLAINER");
+    })
+})
 
 module.exports = supervisor;

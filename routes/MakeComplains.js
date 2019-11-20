@@ -26,6 +26,7 @@ complainData = {
    isViwedByAdmin: '',
    isAccepted: '',
    isRejected: '',
+   reason:'',
    isAssigned: '',
    isCompleted: ''
 }
@@ -90,6 +91,7 @@ complains.post('/complain', upload.single('compImg'), (req, res) => {
             isViwedByAdmin: false,
             isAccepted: false,
             isRejected: false,
+            reason:'',
             isAssigned: false,
             isCompleted: false
          }
@@ -147,38 +149,38 @@ complains.post("/editablecomplains", (req, res) => {
 complains.post("/deletecomplains", (req, res) => {
    const id = req.body.id;
    Complain.destroy({
-      where:{
-         id : id
+      where: {
+         id: id
       }
    }).then(result => {
       res.json({
-         message : "Your Complain has been deleted."
+         message: "Your Complain has been deleted."
       })
       console.log("COMPLAIN_DELETED");
    })
 });
 
 //RATE_JOB
-complains.post("/ratejob",(req,res)=>{
+complains.post("/ratejob", (req, res) => {
    const id = req.body.id;
    const currentRate = req.body.rate;
    console.log(id);
    console.log(currentRate);
 
    Job.update({
-     rating : currentRate
-   },{
-      where:{
-         complainID :id
+      rating: currentRate
+   }, {
+      where: {
+         complainID: id
       }
-   }).then(result=>{
+   }).then(result => {
       Complain.update({
-         isViwedCompletedByUser : true
-      },{
-         where:{
-            id:id
+         isViwedCompletedByUser: true
+      }, {
+         where: {
+            id: id
          }
-      }).then(respond=>{
+      }).then(respond => {
          console.log("RATED_SUCCESFULLY");
       });
    });
@@ -188,16 +190,20 @@ complains.post("/ratejob",(req,res)=>{
 //-------------itrack24 MobileClient----------------------/
 
 //GET_MY_ALL_COMPLAINS
-complains.post("/getallcomplains",(req,res)=>{
+complains.post("/getallcomplains", (req, res) => {
    const user_id = req.body.user_id;
    Complain.findAll({
-      where : {
-         user_id : user_id
-      }
-   }).then(result=>{
+      where: {
+         user_id: user_id
+      },
+      order: [
+         ['id', 'DESC'], //GET_AS_DESCENDING_ORDER
+      ]
+
+   }).then(result => {
       res.json(result);
       // console.log("HERE_YOUR_ALL_COMPLAINS");
-   }); 
+   });
 });
 
 
