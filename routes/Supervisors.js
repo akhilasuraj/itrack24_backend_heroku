@@ -73,6 +73,24 @@ supervisor.post("/viewjob", (req, res) => {
     })
 });
 
+//AVAILABLE_WORKERS_COUNT
+supervisor.post("/workerscount", (req,res)=>{
+    const category = req.body.category;
+    Worker.count({
+        where :{
+            availability : true,
+            [Sequelize.Op.or]:[
+                {JobType1:category},
+                {JobType2:category}
+            ]
+        }
+    }).then(sum=>{
+        res.json(sum);
+        console.log("HERE_IS_THE_AVAILABLE_WORKERS_NOW");
+    });
+});
+
+
 
 //ADD_WORKERS_TO_SPECIFIC_JOB_WIHT_SPECIFIC_AMOUNT
 supervisor.post("/addworker", (req, res) => {
@@ -80,15 +98,15 @@ supervisor.post("/addworker", (req, res) => {
     const amount = req.body.amount;
     const jobID = req.body.jobID;
     Worker.findAndCountAll({
-            where: {
-                [Sequelize.Op.or]: [
-                    { JobType1: JobType },
-                    { JobType2: JobType }
-                ],
-                availability: true
-            },
-            limit: amount
-        })
+        where: {
+            [Sequelize.Op.or]: [
+                { JobType1: JobType },
+                { JobType2: JobType }
+            ],
+            availability: true
+        },
+        limit: 10
+    })
         .then((result) => {
             result.rows.forEach(element => {
                 console.log(element.id);
@@ -99,25 +117,23 @@ supervisor.post("/addworker", (req, res) => {
                 Employment.create(EmploymentData)
                     .then(() => {
                         Worker.update({
-                                availability: false,
-                                jobID: jobID
-                            }, {
-                                where: {
-                                    id: element.id
-                                }
-                            }),
+                            availability: false,
+                            jobID: jobID
+                        }, {
+                            where: {
+                                id: element.id
+                            }
+                        }),
                             Job.update({
                                 isWorkersAdded: true
                             }, {
                                 where: {
                                     id: jobID
                                 }
-                            }).then((respond) => {
-                                res.json({
-                                    message : "Success"
-                                });                         
-                    });
-                    });
+                            });
+                    }); 
+            }), res.send({
+                message: "Success"
             });
         });
 });

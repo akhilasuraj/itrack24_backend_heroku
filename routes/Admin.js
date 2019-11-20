@@ -33,13 +33,18 @@ admin.post("/registerSupervisor", (req, res, err) => {
     }).then((data) => {
         if (data) {
             console.log("SUPERVISOR_ALREADY_REGISTERED");
+            res.json({
+                message1: "Supervisor already exist. Email already registered"
+            })
         }
         else {
             const hash = bcrypt.hashSync(SuperData.password, 10);
             SuperData.password = hash;
             Supervisor.create(SuperData)
                 .then((data) => {
-                    res.json(data); //SEND_SUPERVISOR_JOB_CATEGORY_AND_ID
+                    res.json({
+                        message2:"Succesfully registered"
+                    }); //SEND_SUPERVISOR_JOB_CATEGORY_AND_ID
                     console.log("SUPERVISOR_CREATED_SUCCESFULLY")
                 });
         }
@@ -54,7 +59,7 @@ admin.post("/registerSupervisor", (req, res, err) => {
 //REGISTER_WORKER
 admin.post("/registerWorker", (req, res, err) => {
     const WorkerData = {
-        LastName: req.body.LastName,
+        LastName: req.body.lastname,
         Nicno: req.body.Nicno,
         Contact: req.body.Contact,
         JobType1: req.body.JobType1,
@@ -71,12 +76,18 @@ admin.post("/registerWorker", (req, res, err) => {
     }).then((data) => {
         if (data) {
             console.log("WORKER_ALREADY_REGISTERED");
+            res.json({
+                message1:"Worker already exists"
+            })
         }
         else {
             Worker.create(WorkerData)
                 .then((data) => {
                     if (data) {
                         console.log("WORKER_CREATED_SUCCESFULLY");
+                        res.json({
+                            message2:"Succesfully registered"
+                        })
                     }
                 });
         }
