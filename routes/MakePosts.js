@@ -91,8 +91,8 @@ posts.post('/addpost',upload.single('postImg'), (req, res, err) => {
         PostDate: getDate(),            
         PostTime: getTime(),
         isViwedByUser:false,
-        isViwedByAdmin:false,
-        isAccepted:false,
+        isViwedByAdmin:true,
+        isAccepted:true,
         isRejected:false,
     }
     if (PostDetails) {
