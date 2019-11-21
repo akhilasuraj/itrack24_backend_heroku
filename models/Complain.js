@@ -16,13 +16,20 @@ module.exports = db.sequelize.define(
       description: {
          type: Sequelize.STRING
       },
+
       complainImg: {
          type: Sequelize.STRING
       },
+
       date: {
          type: Sequelize.STRING
       },
+      
       time: {
+         type: Sequelize.STRING
+      },
+
+      location: {
          type: Sequelize.STRING
       },
 

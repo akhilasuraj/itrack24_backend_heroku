@@ -14,11 +14,9 @@ complainData = {
    category: '',
    description: '',
    complainImg: '',
-   address1: '',
-   address2: '',
-   district: '',
    date: '',
    time: '',
+   location: '',
    longitude: 0,
    latitude: 0,
    isViwedByUser: '',
@@ -83,6 +81,7 @@ complains.post('/complain', upload.single('compImg'), (req, res) => {
             complainImg: req.file.filename,
             date: req.body.date,
             time: req.body.time,
+            location: req.body.location,
             longitude: req.body.longitude,
             latitude: req.body.latitude,
             sectionName: sectionName,
@@ -112,7 +111,7 @@ complains.post('/complain', upload.single('compImg'), (req, res) => {
 
 //-------------------MY COMPLAINS-----------------
 
-//ACCCEPTABLE_COMPLAINS
+//ACCCEPTABLE_COMPLAINS ---------------------> lets take status
 complains.post('/acceptedcomplains', (req, res) => {
    Complain.findAll({
       where: {
@@ -181,6 +180,7 @@ complains.post("/ratejob", (req, res) => {
             id: id
          }
       }).then(respond => {
+         res.json(respond);
          console.log("RATED_SUCCESFULLY");
       });
    });

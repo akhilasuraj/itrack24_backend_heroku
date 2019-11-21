@@ -43,7 +43,7 @@ admin.post("/registerSupervisor", (req, res, err) => {
             Supervisor.create(SuperData)
                 .then((data) => {
                     res.json({
-                        message2:"Succesfully registered"
+                        message2: "Succesfully registered"
                     }); //SEND_SUPERVISOR_JOB_CATEGORY_AND_ID
                     console.log("SUPERVISOR_CREATED_SUCCESFULLY")
                 });
@@ -65,7 +65,7 @@ admin.post("/registerWorker", (req, res, err) => {
         JobType1: req.body.JobType1,
         JobType2: req.body.JobType2,
         availability: true,
-        jobID : 0
+        jobID: 0
 
     }
 
@@ -77,7 +77,7 @@ admin.post("/registerWorker", (req, res, err) => {
         if (data) {
             console.log("WORKER_ALREADY_REGISTERED");
             res.json({
-                message1:"Worker already exists"
+                message1: "Worker already exists"
             })
         }
         else {
@@ -86,7 +86,7 @@ admin.post("/registerWorker", (req, res, err) => {
                     if (data) {
                         console.log("WORKER_CREATED_SUCCESFULLY");
                         res.json({
-                            message2:"Succesfully registered"
+                            message2: "Succesfully registered"
                         })
                     }
                 });
@@ -100,7 +100,7 @@ admin.post("/registerWorker", (req, res, err) => {
 admin.get("/compcount", (req, res) => {
     Complain.count({
         where: {
-               isViwedByAdmin: false 
+            isViwedByAdmin: false
         }
     }).then((respond) => {
         res.json(respond);
@@ -110,7 +110,7 @@ admin.get("/compcount", (req, res) => {
 admin.get("/postcount", (req, res) => {
     Post.count({
         where: {
-                 isViwedByAdmin: false 
+            isViwedByAdmin: false
         }
     }).then((respond) => {
         res.json(respond);
@@ -123,9 +123,9 @@ admin.get("/viewcompNotification", (req, res) => {
     Complain.belongsTo(User, { foreignKey: 'user_id' }) //JOIN_USER_AND_COMPLAIN_TABLE
     Complain.findAll({
         where: {
-           isViwedByAdmin: false,
-           isAccepted : false,
-           isRejected : false 
+            isViwedByAdmin: false,
+            isAccepted: false,
+            isRejected: false
         },
         include: [User],
         order: [
@@ -140,10 +140,10 @@ admin.get("/viewcompNotification", (req, res) => {
 admin.get("/viewpostNotification", (req, res) => {
     Post.findAll({
         where: {
-                isViwedByAdmin: false,
-                isAccepted: false,
-                isRejected: false
-            
+            isViwedByAdmin: false,
+            isAccepted: false,
+            isRejected: false
+
         }, order: [
             ['id', 'DESC']
         ]
@@ -156,7 +156,7 @@ admin.get("/viewpostNotification", (req, res) => {
 //GO_INTO_COMPLAIN
 admin.post("/gointoComplain", (req, res) => {
     const id = req.body.id;
-    console.log("post id is "+ id);
+    console.log("post id is " + id);
     User.hasMany(Complain, { foreignKey: 'user_id' })
     Complain.belongsTo(User, { foreignKey: 'user_id' }) //JOIN_USER_AND_COMPLAIN_TABLE
 
@@ -195,8 +195,8 @@ admin.post("/gointoPost", (req, res) => {
                     id: id
                 }
             })
-            res.json(result);
-            console.log(result);
+        res.json(result);
+        console.log(result);
     });
 });
 
@@ -224,10 +224,10 @@ admin.post("/acceptcomp", (req, res) => {
 admin.post("/rejectcomp", (req, res) => {
     const id = req.body.id;
     const reason = req.body.reason;
-    console.log("this is the rejected reason " + reason);
+    console.log("this is the rejected reason----->>>>" + reason);
     Complain.update({
         isRejected: true,
-        reason : reason
+        reason: reason
     },
         {
             where: {
@@ -275,5 +275,62 @@ admin.post("/rejectpost", (req, res) => {
 
 });
 
+
+//INPROGRESS_COMPLAINS
+admin.get("/inprogresscomplains", (req, res) => {
+
+    Supervisor.hasMany(Job, { foreignKey: 'supervisorID' });
+    Job.belongsTo(Supervisor, { foreignKey: 'supervisorID' });
+
+    // Supervisor.hasMany(Complain,{foreignKey : 'supervisorID'});
+    // Complain.belongsTo(Supervisor, {foreignKey : 'supervisorID'})
+    Job.findAll({
+        where: {
+            isworkOn: true
+        },
+        include: [Supervisor]
+    }).then(respond => {
+        res.json(respond);
+    });
+});
+
+
+//GET_MORE_DETAILS
+admin.post("/getmoredetails", (req, res) => {
+    const complainID = req.body.complainID;
+    console.log(complainID);
+    User.hasMany(Complain, { foreignKey: 'user_id' });
+    Complain.belongsTo(User, { foreignKey: 'user_id' })
+
+    Complain.findOne({
+        where:{
+            id : complainID
+        },
+        include:[User]
+    }).then(result=>{
+        res.json(result);
+        console.log("HERE INPROGRESSING COMPLAIN + USER DETAILS");
+    });
+});
+
+
+//COMPLETED_COMPLAINS
+admin.get("/completedcomplains", (req, res) => {
+
+    User.hasMany(Complain, { foreignKey: 'user_id' });
+    Complain.belongsTo(User, { foreignKey: 'user_id' });
+
+    // Supervisor.hasMany(Complain,{foreignKey : 'supervisorID'});
+    // Complain.belongsTo(Supervisor, {foreignKey : 'supervisorID'})
+    Complain.findAll({
+        where: {
+            isCompleted: true
+        },
+        include: [User]
+    }).then(respond => {
+        res.json(respond);
+        console.log("COMPLETED_COMPLAINS");
+    });
+});
 
 module.exports = admin

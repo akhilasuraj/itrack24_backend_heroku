@@ -285,7 +285,9 @@ supervisor.post("/getuserdetails",(req,res)=>{
     }).then(result=>{
         res.json(result);
         console.log("HERE THE DETAILS OF THE COMPLAINER");
-    })
-})
+    });
+});
+
+
 
 module.exports = supervisor;
