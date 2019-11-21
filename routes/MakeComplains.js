@@ -4,6 +4,7 @@ const multer = require('multer');
 const cors = require("cors");
 const Complain = require("../models/Complain");
 const Section = require("../models/Section");
+const Job = require("../models/job");
 const Sequelize = require('sequelize');
 complains.use(cors());
 
@@ -13,11 +14,9 @@ complainData = {
    category: '',
    description: '',
    complainImg: '',
-   address1: '',
-   address2: '',
-   district: '',
    date: '',
    time: '',
+   location: '',
    longitude: 0,
    latitude: 0,
    isViwedByUser: '',
@@ -25,6 +24,7 @@ complainData = {
    isViwedByAdmin: '',
    isAccepted: '',
    isRejected: '',
+   reason:'',
    isAssigned: '',
    isCompleted: ''
 }
@@ -81,6 +81,7 @@ complains.post('/complain', upload.single('compImg'), (req, res) => {
             complainImg: req.file.filename,
             date: req.body.date,
             time: req.body.time,
+            location: req.body.location,
             longitude: req.body.longitude,
             latitude: req.body.latitude,
             sectionName: sectionName,
@@ -89,6 +90,7 @@ complains.post('/complain', upload.single('compImg'), (req, res) => {
             isViwedByAdmin: false,
             isAccepted: false,
             isRejected: false,
+            reason:'',
             isAssigned: false,
             isCompleted: false
          }
@@ -109,7 +111,7 @@ complains.post('/complain', upload.single('compImg'), (req, res) => {
 
 //-------------------MY COMPLAINS-----------------
 
-//ACCCEPTABLE_COMPLAINS
+//ACCCEPTABLE_COMPLAINS ---------------------> lets take status
 complains.post('/acceptedcomplains', (req, res) => {
    Complain.findAll({
       where: {
@@ -146,33 +148,62 @@ complains.post("/editablecomplains", (req, res) => {
 complains.post("/deletecomplains", (req, res) => {
    const id = req.body.id;
    Complain.destroy({
-      where:{
-         id : id
+      where: {
+         id: id
       }
    }).then(result => {
       res.json({
-         message : "Your Complain has been deleted."
+         message: "Your Complain has been deleted."
       })
       console.log("COMPLAIN_DELETED");
    })
 });
 
+//RATE_JOB
+complains.post("/ratejob", (req, res) => {
+   const id = req.body.id;
+   const currentRate = req.body.rate;
+   console.log(id);
+   console.log(currentRate);
+
+   Job.update({
+      rating: currentRate
+   }, {
+      where: {
+         complainID: id
+      }
+   }).then(result => {
+      Complain.update({
+         isViwedCompletedByUser: true
+      }, {
+         where: {
+            id: id
+         }
+      }).then(respond => {
+         res.json(respond);
+         console.log("RATED_SUCCESFULLY");
+      });
+   });
+});
 
 
-//-------------itrack24 MobileClient----------------------//
-
+//-------------itrack24 MobileClient----------------------/
 
 //GET_MY_ALL_COMPLAINS
-complains.post("/getallcomplains",(req,res)=>{
+complains.post("/getallcomplains", (req, res) => {
    const user_id = req.body.user_id;
    Complain.findAll({
-      where : {
-         user_id : user_id
-      }
-   }).then(result=>{
+      where: {
+         user_id: user_id
+      },
+      order: [
+         ['id', 'DESC'], //GET_AS_DESCENDING_ORDER
+      ]
+
+   }).then(result => {
       res.json(result);
-      console.log("HERE_YOUR_ALL_COMPLAINS");
-   }); 
+      // console.log("HERE_YOUR_ALL_COMPLAINS");
+   });
 });
 
 

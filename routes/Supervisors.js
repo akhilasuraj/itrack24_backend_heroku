@@ -6,6 +6,7 @@ const supervisor = express.Router();
 supervisor.use(cors());
 const Complain = require("../models/Complain");
 const Supervisor = require("../models/Supervisor");
+const User = require("../models/User");
 const Job = require("../models/job");
 const Worker = require("../models/Worker");
 const Employment = require("../models/Employment");
@@ -53,6 +54,7 @@ supervisor.post("/getjob", (req, res) => {
         }
     }).then((result) => {
         res.json(result);
+        // console.log(result);
         console.log("SUITABLE_COMPLAINS_FOR_A_SUPERVISOR");
     })
 });
@@ -72,6 +74,24 @@ supervisor.post("/viewjob", (req, res) => {
     })
 });
 
+//AVAILABLE_WORKERS_COUNT
+supervisor.post("/workerscount", (req,res)=>{
+    const category = req.body.category;
+    Worker.count({
+        where :{
+            availability : true,
+            [Sequelize.Op.or]:[
+                {JobType1:category},
+                {JobType2:category}
+            ]
+        }
+    }).then(sum=>{
+        res.json(sum);
+        console.log("HERE_IS_THE_AVAILABLE_WORKERS_NOW");
+    });
+});
+
+
 
 //ADD_WORKERS_TO_SPECIFIC_JOB_WIHT_SPECIFIC_AMOUNT
 supervisor.post("/addworker", (req, res) => {
@@ -79,19 +99,18 @@ supervisor.post("/addworker", (req, res) => {
     const amount = req.body.amount;
     const jobID = req.body.jobID;
     Worker.findAndCountAll({
-            where: {
-                [Sequelize.Op.or]: [
-                    { JobType1: JobType },
-                    { JobType2: JobType }
-                ],
-                availability: true
-            },
-            limit: amount
-        })
+        where: {
+            [Sequelize.Op.or]: [
+                { JobType1: JobType },
+                { JobType2: JobType }
+            ],
+            availability: true
+        },
+        limit: amount
+    })
         .then((result) => {
             result.rows.forEach(element => {
                 console.log(element.id);
-
                 EmploymentData = {
                     workerID: element.id,
                     jobID: jobID
@@ -99,13 +118,13 @@ supervisor.post("/addworker", (req, res) => {
                 Employment.create(EmploymentData)
                     .then(() => {
                         Worker.update({
-                                availability: false,
-                                jobID: jobID
-                            }, {
-                                where: {
-                                    id: element.id
-                                }
-                            }),
+                            availability: false,
+                            jobID: jobID
+                        }, {
+                            where: {
+                                id: element.id
+                            }
+                        }),
                             Job.update({
                                 isWorkersAdded: true
                             }, {
@@ -113,17 +132,9 @@ supervisor.post("/addworker", (req, res) => {
                                     id: jobID
                                 }
                             });
-                    }).then(respond => {
-                        if (respond) {
-                            res.json({
-                                message: 'SUCCESS'
-                            });
-                        } else {
-                            res.json({
-                                message: 'UNSUCCESS'
-                            })
-                        }
-                    });
+                    }); 
+            }), res.send({
+                message: "Success"
             });
         });
 });
@@ -206,6 +217,7 @@ supervisor.post("/getjoblist", (req, res) => {
         include: [Complain]
     }).then(result => {
         res.json(result);
+        
     })
 
 });
@@ -228,6 +240,7 @@ supervisor.post("/getallworkers", (req, res) => {
 //COMPLETED_WORK------------------------------------------->changed
 supervisor.post("/workcomplete", (req, res) => {
     const id = req.body.id;
+    console.log(id);
     const complainID = req.body.complainID;
     Job.update({
         isWorkOn: false,
@@ -257,5 +270,24 @@ supervisor.post("/workcomplete", (req, res) => {
         });
     });
 });
+
+//GET_COMPLAINED_USER_DETAIL
+supervisor.post("/getuserdetails",(req,res)=>{
+    const id = req.body.id;
+    User.hasMany(Complain, { foreignKey: 'user_id' })
+    Complain.belongsTo(User, { foreignKey: 'user_id' }) //JOIN_USER_AND_COMPLAIN_TABLE
+    
+    Complain.findOne({
+        where: {
+            id: id
+        },
+        include:[User]
+    }).then(result=>{
+        res.json(result);
+        console.log("HERE THE DETAILS OF THE COMPLAINER");
+    });
+});
+
+
 
 module.exports = supervisor;
